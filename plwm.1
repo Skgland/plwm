@@ -1,0 +1,169 @@
+.TH PLWM 1 plwm\-VERSION
+.SH NAME
+plwm \- An X11 window manager written in Prolog
+.SH SYNOPSIS
+.B plwm
+[\fIOPTION\fR]...
+.SH DESCRIPTION
+plwm is a highly customizable X11 dynamic tiling window manager written in Prolog, inspired by dwm.
+.P
+For more detailed documentation, please refer to the project's README.md.
+.SH OPTIONS
+.TP
+.B \-h, --help
+Display help, then exit.
+.TP
+.B \-v, --version
+Display version, then exit.
+.TP
+.B \-l, --log=[FILE|stdout]
+Path to logfile or stdout.
+.TP
+.B \-c, --config=FILE
+Path to user configuration. Can be an absolute path or a relative one from \fB$HOME\fR. Default value: \fB.config/plwm/config\fR.
+.TP
+.B \-C, --check
+Check configuration validity, then exit.
+.SH USAGE
+.SS Default keybindings
+.TP
+.B super + j
+Focus next window in stack.
+.TP
+.B super + k
+Focus previous window in stack.
+.TP
+.B super + shift + j
+Swap focused window with the next.
+.TP
+.B super + shift + k
+Swap focused window with the preceding.
+.TP
+.B super + Return
+Move focused window to top of the stack.
+.TP
+.B super + q
+Close focused window.
+.TP
+.B super + shift + space
+Toggle between manual and automatic management of focused window.
+.TP
+.B super + f
+Toggle fullscreen of focused window.
+.TP
+.B super + shift + q
+Quit plwm.
+.TP
+.B super + i
+Increase number of master windows by 1.
+.TP
+.B super + d
+Decrease number of master windows by 1.
+.TP
+.B super + h
+Remove 5% from the space of master area.
+.TP
+.B super + l
+Add 5% to the space of master area.
+.TP
+.B super + shift + f
+Switch to floating layout (all windows unmanaged).
+.TP
+.B super + shift + m
+Switch to monocle layout (all maximized, one visible at a time).
+.TP
+.B super + shift + s
+Switch to stack layout.
+.TP
+.B super + shift + h
+Switch to hstack (horizontal stack) layout.
+.TP
+.B super + shift + g
+Switch to grid layout.
+.TP
+.B super + shift + l
+Switch to lmaster (left master) layout.
+.TP
+.B super + shift + r
+Switch to rmaster (right master) layout.
+.TP
+.B super + shift + t
+Switch to tmaster (top master) layout.
+.TP
+.B super + shift + b
+Switch to bmaster (bottom master) layout.
+.TP
+.B super + shift + c
+Switch to cmaster (central master) layout.
+.TP
+.B super + Tab
+Switch between last two workspaces.
+.TP
+.B super + shift + Tab
+Toggle the hide_empty_workspaces setting.
+.TP
+.B super + 1..9
+Go to workspace '1'..'9'.
+.TP
+.B super + p
+Go to previous workspace.
+.TP
+.B super + n
+Go to next workspace.
+.TP
+.B super + shift + 1..9
+Move focused window to workspace '1'..'9'.
+.TP
+.B super + shift + p
+Move focused window to previous workspace.
+.TP
+.B super + shift + n
+Move focused window to next workspace.
+.TP
+.B super + ,
+Switch to previous monitor.
+.TP
+.B super + .
+Switch to next monitor.
+.TP
+.B super + shift + ,
+Move focused window to previous monitor.
+.TP
+.B super + shift + .
+Move focused window to next monitor.
+.SS Mouse commands
+.TP
+.B super + button1
+Move window by dragging. Managed window will become floating.
+.TP
+.B super + button3
+Resize window by dragging. Managed window will become floating.
+.SH ISSUES
+The following excerpt from dwm(1) applies to plwm as well:
+.P
+Java applications which use the XToolkit/XAWT backend may draw grey windows
+only. The XToolkit/XAWT backend breaks ICCCM-compliance in recent JDK 1.5 and early
+JDK 1.6 versions, because it assumes a reparenting window manager. Possible workarounds
+are using JDK 1.4 (which doesn't contain the XToolkit/XAWT backend) or setting the
+environment variable
+.BR AWT_TOOLKIT=MToolkit
+(to use the older Motif backend instead) or running
+.B xprop -root -f _NET_WM_NAME 32a -set _NET_WM_NAME LG3D
+or
+.B wmname LG3D
+(to pretend that a non-reparenting window manager is running that the
+XToolkit/XAWT backend can recognize) or when using OpenJDK setting the environment variable
+.BR _JAVA_AWT_WM_NONREPARENTING=1 .
+.SH SEE ALSO
+.BR Xorg (1)
+.BR xprop (1)
+.BR xrandr (1)
+.BR dmenu (1)
+.BR polybar (1),
+.SH BUGS
+Please report bugs by creating issues at
+.BR <https://github.com/seeker04/plwm>
+.SH AUTHOR
+plwm was created by Barnabás Zahorán <zahoranb@proton.me>. For a comprehensive list of contributors, see the AUTHORS file distributed with plwm.
+.SH COPYRIGHT
+MIT License, Copyright (c) 2023 Barnabás Zahorán, see LICENSE

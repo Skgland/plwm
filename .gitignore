@@ -1,0 +1,16 @@
+# object files, shared objects
+*.o
+*.so
+
+# executable
+plwm
+
+# tag file
+tags
+
+# clangd config
+compile_flags.txt
+
+# local neovim config
+.nvim.lua
+
