@@ -269,9 +269,3 @@ rules([
 % WM_CLASS(STRING) = name , class
 % WM_NAME(STRING)  = title
 
-
-%*****************************  Remote control  *******************************
-
-remotectl_enabled(false).
-remotectl_port(10000).
-
