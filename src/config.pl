@@ -94,8 +94,6 @@ bar_placement(follow_focus).
 % (Note: You can also start/terminate bars manually while plwm is already running,
 % as long as they comply with bar_class)
 %startupcmd("polybar").
-startupcmd("polybar top").
-%startupcmd("polybar bot").
 %startupcmd("picom").
 
 
