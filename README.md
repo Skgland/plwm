@@ -1,5 +1,9 @@
 <!-- MIT License, Copyright (c) 2023 Barnabás Zahorán, see LICENSE -->
 
+<p align="center">
+  <img alt="plwm logo" src="img/logo.png">
+</p>
+
 # plwm - An X11 window manager written in Prolog
 
 **Table of Contents**
@@ -370,7 +374,7 @@ menucmd(["rofi", "-dmenu"]).
 
 # Screenshots
 
-| ![Screenshot 1](screenshots/scr1.png) |
+| ![Screenshot 1](img/scr1.png) |
 |:--:|
 | *lmaster / nmaster=1 / mfact=2/3 / 1px borders / 18px inner & outer gaps / goto window menu / polybar / picom / gruvbox colors* |
 
