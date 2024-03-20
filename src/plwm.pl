@@ -4,42 +4,6 @@
 %
 % See README.md for getting started
 
-% TODO: bug: windows spawning into floating layout should go to top left corner of **free win space**, instead of (0,0)
-% TODO: bug: menu operations should not include Monitor index when only 1 monitor is active
-% TODO: bug: handle mirrored monitors (ignore if it has same geometry like in dwm?)
-% TODO: bug: simple click (without modkey) should focus window (maybe input handling must be restructured for this to be more like dwm's)
-% TODO: bug: enternotify from a resting mouse (e.g. after a change_mfact, destroynotify or switch_workspace) can change focused window!
-% TODO: bug: umlet (Java application) makes plwm suspended when opened from dmenu (but not when from terminal)
-% TODO: bug: umlet Open/Save/etc. dialogs are 1px in size (this is again, probably caused by the lack of sizehint handling)
-% TODO: bug: Steam after closing leaves an invisible phantom window (does not occur in dwm)
-% TODO: bug: Godot editor brings some window focusing issue
-
-% TODO: feature: spawn new window at bottom of the stack instead of the top
-% TODO: feature: add some sort of scratch pad functionality?
-% TODO: feature: finish fullscreen functionality
-%           it works now with qutebrowser and feh, but does not work with firefox, mpv, etc.
-%           for them, we probably need to handle sizehints properly...
-% TODO: feature: make urgency hints (see: dwm)
-% TODO: feature: add more EWMH support (_NET_ stuff)
-%           see: https://specifications.freedesktop.org/wm-spec/latest/
-%           have a look at dwm's "wmatom"s too
-% TODO: feature: drag/resize improvement
-% TODO:     maybe mouse cursor should go to bottom right corner of window that's being resized like in dwm?
-% TODO:     change cursor icon when dragging/resizing windows like in dwm?
-% TODO: feature: alternative multi-monitor handlings: xmonad one? unique set per monitor one?
-% TODO: feature: remote commands with TCP/RPC or something for scriptability? (or just recommend devilspie?)
-%           Maybe with this: https://www.swi-prolog.org/pldoc/man?section=socket
-
-% TODO: refactor: order predicates more logically
-% TODO: refactor: properly distinguish between usages of = and ==
-% TODO: refactor: use =:= wherever possible instead of helper variables
-
-% TODO: optimization: replace member/2 calls with memberchk/2 at many places? also add once/1 to some places?
-
-% TODO: tests: try plwm with bars other than polybar, e.g. lemonbar, xmobar (briefly tried lemonbar, seems to work well)
-% TODO: tests: write unit tests using this: https://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/plunit.html%27)
-% TODO: tests: write system tests using xdotool(1)
-
 :- use_module(library(assoc)).
 
 :- use_module(config).

@@ -4,8 +4,6 @@
  *
  */
 
-/* TODO: check if some free(), PL_free() or XFree() calls are still needed */
-
 #include <X11/X.h>
 #include <X11/Xutil.h>
 #include <X11/Xlib.h>
@@ -95,10 +93,10 @@ static PL_extension predicates[] = {
 	{ "x_set_error_handler"       ,  0, x_set_error_handler        , 0 }, /* handler it sets is xerror() */
 	{ "x_grab_key"                ,  7, x_grab_key                 , 0 },
 	{ "x_grab_button"             , 10, x_grab_button              , 0 },
-	{ "x_grab_pointer"            ,  9, x_grab_pointer             , 0 }, /* Unused, TODO: remove if not needed */
+	{ "x_grab_pointer"            ,  9, x_grab_pointer             , 0 }, /* Unused */
 	{ "x_ungrab_key"              ,  4, x_ungrab_key               , 0 },
 	{ "x_ungrab_button"           ,  4, x_ungrab_button            , 0 },
-	{ "x_ungrab_pointer"          ,  2, x_ungrab_pointer           , 0 }, /* Unused, TODO: remove if not needed */
+	{ "x_ungrab_pointer"          ,  2, x_ungrab_pointer           , 0 }, /* Unused */
 	{ "x_keysym_to_keycode"       ,  3, x_keysym_to_keycode        , 0 },
 	{ "x_string_to_keysym"        ,  2, x_string_to_keysym         , 0 },
 	{ "x_next_event"              ,  2, x_next_event               , 0 },
@@ -112,7 +110,7 @@ static PL_extension predicates[] = {
 	{ "x_set_window_border"       ,  3, x_set_window_border        , 0 },
 	{ "x_set_input_focus"         ,  4, x_set_input_focus          , 0 },
 	{ "x_kill_client"             ,  2, x_kill_client              , 0 },
-	{ "x_sync"                    ,  2, x_sync                     , 0 }, /* Unused, TODO: remove if not needed */
+	{ "x_sync"                    ,  2, x_sync                     , 0 }, /* Unused */
 	{ "x_intern_atom"             ,  4, x_intern_atom              , 0 },
 	{ "x_get_class_hint"          ,  4, x_get_class_hint           , 0 },
 	{ "x_change_property"         ,  8, x_change_property          , 0 },
@@ -124,7 +122,7 @@ static PL_extension predicates[] = {
 	{ "x_get_transient_for_hint"  ,  3, x_get_transient_for_hint   , 0 },
 	{ "x_get_window_property"     ,  6, x_get_window_property      , 0 }, /* 4th, 5th, 8th-11th args are omitted */
 	{ "x_get_wm_normal_hints"     ,  4, x_get_wm_normal_hints      , 0 }, /* supplied_return arg is ignored */
-	{ "x_warp_pointer"            ,  9, x_warp_pointer             , 0 }, /* Unused, TODO: remove if not needed */
+	{ "x_warp_pointer"            ,  9, x_warp_pointer             , 0 }, /* Unused */
 
 	{ "default_root_window"       ,  2, default_root_window        , 0 },
 	{ "default_screen"            ,  2, default_screen             , 0 },

@@ -378,16 +378,11 @@ menucmd(["rofi", "-dmenu"]).
 |:--:|
 | *lmaster / nmaster=1 / mfact=2/3 / 1px borders / 18px inner & outer gaps / goto window menu / polybar / picom / gruvbox colors* |
 
-<!-- TODO: include a rofi one too -->
-...
-
 # Project status
 
-**!!! Disclaimer:** plwm is still in an experimental state. While crashes or other major bugs don't really occur, it's good to keep this in mind **!!!**
+**!!! Disclaimer:** plwm is still in an experimental state. First stable release will be v1.0. While crashes or other major bugs don't really occur, it's good to keep this in mind **!!!**
 
-**TODOs**
-
-See comment block at the beginning of [plwm.pl](src/plwm.pl) for now.
+For known problems, see the [Issues](https://github.com/Seeker04/plwm/issues).
 
 # Contribution
 
