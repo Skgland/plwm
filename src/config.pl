@@ -152,7 +152,7 @@ keymaps([
   super + shift + c         ->  layout:set_layout(cmaster)      ,
 
   % You can use nrows(N) and ncols(N) for layouts with fixed number of rows/columns, e.g.:
-  %keymap( "T", [super, shift], layout:set_layout(ncols(3)) ).
+  %super + shift + "T"       -> layout:set_layout(ncols(3))      ,
 
   % Workspaces
   super +         "Tab"     ->  toggle_workspace                ,
