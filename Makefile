@@ -28,7 +28,7 @@ plx.o: src/plx.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 plx.so: src/plx.o
-	$(CC) $(LDFLAGS) $< -o $@
+	$(CC) $< $(LDFLAGS) -o $@
 
 clean:
 	rm -f src/plx.o plx.so plwm
