@@ -54,7 +54,11 @@ Powered by [SWI-Prolog](https://www.swi-prolog.org/)
 **Dependencies:**
 
 * Xorg with libxft, libxinerama (including the X11 development headers)
-* [SWI-Prolog](https://www.swi-prolog.org/Download.html) (most likely also available from your distro's package repository)
+* [SWI-Prolog](https://www.swi-prolog.org/Download.html) (most likely available from your distro's package repository)
+
+On Ubuntu 22.04 you can install them with:
+
+`$ sudo apt install swi-prolog libxinerama-dev libxft-dev`
 
 Run:
 
@@ -84,6 +88,17 @@ fi
 Please refer to the documentation of your display manager on how to set up sessions for custom WMs.
 
 [Here](https://wiki.archlinux.org/title/Display_manager) you can find good references for this.
+
+For most modern display managers, you'll have to create a `/usr/share/xsessions/plwm.desktop` file with content like:
+
+```ini
+[Desktop Entry]
+Name=plwm
+Comment=This session logs you into plwm
+Exec=plwm
+Icon=path-to-this-repo/plwm/img/logo.png
+Type=Application
+```
 
 # Usage
 
