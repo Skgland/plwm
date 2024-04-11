@@ -4,7 +4,7 @@
 
 CC     ?= cc
 CSTD    = c89
-IFLAGS  = -I/usr/lib/swipl/include -I/usr/include/freetype2
+IFLAGS  = -I/usr/lib/swipl/include -I/usr/lib/swi-prolog/include -I/usr/include/freetype2
 WFLAGS  = -W -Wall -Wextra -Wconversion -Wfloat-equal -Wshadow
 OFLAGS  = -O2
 
