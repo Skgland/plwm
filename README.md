@@ -391,6 +391,10 @@ menucmd(["rofi", "-dmenu"]).
 
 | ![Screenshot 1](img/scr1.png) |
 |:--:|
+| *default appearance* |
+
+| ![Screenshot 2](img/scr2.png) |
+|:--:|
 | *lmaster / nmaster=1 / mfact=2/3 / 1px borders / 18px inner & outer gaps / goto window menu / polybar / picom / gruvbox colors* |
 
 # Project status
