@@ -26,11 +26,11 @@ snap_threshold(32).
 
 % Space reserved around screen edge (floating and fullscreen windows are not affected)
 % Set to 0 or remove the line to disable
-outer_gaps(18).
+outer_gaps(0).
 
 % Gaps between adjacent tiled windows
 % Set to 0 or remove the line to disable
-inner_gaps(18).
+inner_gaps(0).
 
 
 %*******************************  Workspaces  *********************************
