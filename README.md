@@ -401,7 +401,7 @@ menucmd(["rofi", "-dmenu"]).
 
 **!!! Disclaimer:** plwm is still in an experimental state. First stable release will be v1.0. While crashes or other major bugs don't really occur, it's good to keep this in mind **!!!**
 
-For known problems, see the [Issues](https://github.com/Seeker04/plwm/issues).
+For known problems, see [the Issues with bug labels](https://github.com/Seeker04/plwm/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
 
 # Contribution
 
