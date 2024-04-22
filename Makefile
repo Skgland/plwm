@@ -38,7 +38,7 @@ rebuild: clean build
 #============================== Static checks =================================
 
 cppcheck:
-	cppcheck -q --enable=all --language=c --std=$(CSTD) src/plx.c
+	cppcheck -q --enable=all --language=c --std=$(CSTD) --suppress=missingIncludeSystem src/plx.c
 
 clang-tidy:
 	clang-tidy --checks='clang-analyzer-*' --header-filter=.* --extra-arg="-std=$(CSTD)" \
