@@ -17,6 +17,7 @@
 
 #define Q(x) #x
 #define QUOTE(x) Q(x)
+#define GET_MACRO(_1,_2,NAME,...) NAME
 
 #define PL_TRY1(plcall) PL_TRY2(plcall, {})
 #define PL_TRY2(plcall, cleanup) \
@@ -24,8 +25,7 @@
 		cleanup;         \
 		return (foreign_t)PL_warning("%s: " QUOTE((plcall)) " failed!", __func__); \
 	}
-#define GET_MACRO(_1,_2,NAME,...) NAME
-#define PL_TRY(...) GET_MACRO(__VA_ARGS__, PL_TRY2, PL_TRY1)(__VA_ARGS__)
+#define PL_TRY(...) GET_MACRO(__VA_ARGS__, PL_TRY2, PL_TRY1,)(__VA_ARGS__)
 
 /* Bindings to swipl predicates */
 static foreign_t x_open_display(term_t display_name, term_t display);
@@ -86,10 +86,10 @@ static foreign_t c_free(term_t ptr);
 
 /* Helpers */
 static int build_list(term_t dst, term_t *src, size_t size);
-static int xerror(Display __attribute__((unused)) *dpy, XErrorEvent *ee); /* copied from dwm */
+static int xerror(Display __attribute__((unused)) *dpy, const XErrorEvent *ee); /* copied from dwm */
 
 static PL_extension predicates[] = {
-	/* functor                    arity C-callback                 flags   remarks */
+	/* functor name               arity C-callback                 flags   remarks */
 	{ "x_open_display"            ,  2, x_open_display             , 0 }, /* pass "" for XOpenDisplay(NULL) */
 	{ "x_close_display"           ,  1, x_close_display            , 0 },
 	{ "x_set_error_handler"       ,  0, x_set_error_handler        , 0 }, /* handler it sets is xerror() */
@@ -174,7 +174,7 @@ x_close_display(term_t display)
 static foreign_t
 x_set_error_handler(void)
 {
-	XSetErrorHandler(xerror);
+	XSetErrorHandler((XErrorHandler)xerror);
 	PL_succeed;
 }
 
@@ -332,7 +332,7 @@ x_next_event(term_t display, term_t event_return)
 	XEvent ev;
 	term_t subts[18];
 	term_t list;
-	size_t stcnt, i;
+	int stcnt;
 
 	PL_TRY(PL_get_pointer_ex(display, (void**)&dp));
 
@@ -340,7 +340,7 @@ x_next_event(term_t display, term_t event_return)
 
 	if (ev.type == MapRequest) {
 		stcnt = 7;
-		for (i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
+		for (int i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
 		PL_TRY(PL_put_atom_chars(subts[0], "maprequest"));
 		PL_TRY(PL_put_integer(subts[1], ev.xmaprequest.type      ));
 		PL_TRY(PL_put_uint64 (subts[2], ev.xmaprequest.serial    ));
@@ -351,7 +351,7 @@ x_next_event(term_t display, term_t event_return)
 	}
 	else if (ev.type == DestroyNotify) {
 		stcnt = 7;
-		for (i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
+		for (int i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
 		PL_TRY(PL_put_atom_chars(subts[0], "destroynotify"));
 		PL_TRY(PL_put_integer(subts[1], ev.xdestroywindow.type      ));
 		PL_TRY(PL_put_uint64 (subts[2], ev.xdestroywindow.serial    ));
@@ -362,7 +362,7 @@ x_next_event(term_t display, term_t event_return)
 	}
 	else if (ev.type == EnterNotify) {
 		stcnt = 18;
-		for (i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
+		for (int i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
 		PL_TRY(PL_put_atom_chars(subts[0], "enternotify"));
 		PL_TRY(PL_put_integer(subts[ 1], ev.xcrossing.type       ));
 		PL_TRY(PL_put_uint64 (subts[ 2], ev.xcrossing.serial     ));
@@ -384,7 +384,7 @@ x_next_event(term_t display, term_t event_return)
 	}
 	else if (ev.type == PropertyNotify) {
 		stcnt = 8;
-		for (i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
+		for (int i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
 		PL_TRY(PL_put_atom_chars(subts[0], "propertynotify"));
 		PL_TRY(PL_put_uint64 (subts[1], ev.xproperty.serial    ));
 		PL_TRY(PL_put_bool   (subts[2], ev.xproperty.send_event));
@@ -396,7 +396,7 @@ x_next_event(term_t display, term_t event_return)
 	}
 	else if (ev.type == ClientMessage) {
 		stcnt = 11;
-		for (i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
+		for (int i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
 		PL_TRY(PL_put_atom_chars(subts[0], "clientmessage"));
 		PL_TRY(PL_put_integer(subts[ 1], ev.xclient.type               ));
 		PL_TRY(PL_put_uint64 (subts[ 2], ev.xclient.serial             ));
@@ -411,7 +411,7 @@ x_next_event(term_t display, term_t event_return)
 	}
 	else if (ev.type == ConfigureNotify) {
 		stcnt = 14;
-		for (i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
+		for (int i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
 		PL_TRY(PL_put_atom_chars(subts[0], "configurenotify"));
 		PL_TRY(PL_put_integer(subts[ 1], ev.xconfigure.type             ));
 		PL_TRY(PL_put_uint64 (subts[ 2], ev.xconfigure.serial           ));
@@ -430,7 +430,7 @@ x_next_event(term_t display, term_t event_return)
 	else {
 		/* rest of the event types are very similar */
 		stcnt = 15;
-		for (i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
+		for (int i = 0; i < stcnt; ++i) { subts[i] = PL_new_term_ref(); }
 		switch (ev.type) {
 		case KeyPress:
 			PL_TRY(PL_put_atom_chars(subts[0], "keypress"));
@@ -474,7 +474,7 @@ x_next_event(term_t display, term_t event_return)
 	}
 
 	list = PL_new_term_ref();
-	build_list(list, subts, stcnt);
+	build_list(list, subts, (size_t)stcnt);
 	PL_TRY(PL_unify(list, event_return));
 	PL_succeed;
 }
@@ -504,7 +504,6 @@ x_get_window_attributes(term_t display, term_t w, term_t window_attributes_retur
 	XWindowAttributes winattrs;
 	term_t subts[4];
 	term_t list = PL_new_term_ref();
-	size_t i;
 	Status st;
 
 	PL_TRY(PL_get_pointer_ex(display, (void**)&dp));
@@ -512,7 +511,7 @@ x_get_window_attributes(term_t display, term_t w, term_t window_attributes_retur
 
 	st = XGetWindowAttributes(dp, win, &winattrs);
 
-	for (i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		subts[i] = PL_new_term_ref();
 	}
 	PL_TRY(PL_put_integer(subts[0], winattrs.x));
@@ -918,7 +917,6 @@ x_get_wm_normal_hints(term_t display, term_t w, term_t hints_return, term_t stat
 	Status st;
 	term_t subts[18];
 	term_t list = PL_new_term_ref();
-	size_t i;
 
 	PL_TRY(PL_get_pointer_ex(display, (void**)&dp));
 	PL_TRY(PL_get_uint64_ex(w, &win));
@@ -926,7 +924,7 @@ x_get_wm_normal_hints(term_t display, term_t w, term_t hints_return, term_t stat
 	st = XGetWMNormalHints(dp, win, &hints, &supret); /* supplied_return arg is ignored */
 
 	if (st) {
-		for (i = 0; i < 18; ++i) {
+		for (int i = 0; i < 18; ++i) {
 			subts[i] = PL_new_term_ref();
 		}
 		PL_TRY(PL_put_uint64 (subts[ 0], (unsigned)hints.flags));
@@ -1048,7 +1046,7 @@ xinerama_query_screens(term_t display, term_t screen_info)
 {
 	Display *dp;
 	XineramaScreenInfo *scrinfo;
-	int num, i;
+	int num;
 	term_t *subts;
 	term_t list = PL_new_term_ref();
 
@@ -1062,7 +1060,7 @@ xinerama_query_screens(term_t display, term_t screen_info)
 	}
 
 	subts = malloc((size_t)num * 5 * sizeof(term_t));
-	for (i = 0; i < num; ++i) {
+	for (int i = 0; i < num; ++i) {
 		subts[i * 5 + 0] = PL_new_term_ref(); PL_TRY(PL_put_integer(subts[i * 5 + 0], scrinfo[i].screen_number), free(subts));
 		subts[i * 5 + 1] = PL_new_term_ref(); PL_TRY(PL_put_integer(subts[i * 5 + 1], scrinfo[i].x_org), free(subts));
 		subts[i * 5 + 2] = PL_new_term_ref(); PL_TRY(PL_put_integer(subts[i * 5 + 2], scrinfo[i].y_org), free(subts));
@@ -1116,9 +1114,8 @@ c_free(term_t ptr)
 static int
 build_list(term_t dst, term_t *src, size_t size)
 {
-	size_t i;
 	PL_unify_nil_ex(dst);
-	for (i = size; 0 < i; --i) {
+	for (size_t i = size; 0 < i; --i) {
 		if (!PL_cons_list(dst, src[i - 1], dst)) {
 			return 0;
 		}
@@ -1127,17 +1124,17 @@ build_list(term_t dst, term_t *src, size_t size)
 }
 
 static int
-xerror(Display __attribute__((unused)) *dpy, XErrorEvent *ee) /* copied from dwm */
+xerror(Display __attribute__((unused)) *dpy, const XErrorEvent *ee) /* copied from dwm */
 {
 	if (ee->error_code == BadWindow
-	|| (ee->request_code == X_SetInputFocus && ee->error_code == BadMatch)
-	|| (ee->request_code == X_PolyText8 && ee->error_code == BadDrawable)
+	|| (ee->request_code == X_SetInputFocus     && ee->error_code == BadMatch)
+	|| (ee->request_code == X_PolyText8         && ee->error_code == BadDrawable)
 	|| (ee->request_code == X_PolyFillRectangle && ee->error_code == BadDrawable)
-	|| (ee->request_code == X_PolySegment && ee->error_code == BadDrawable)
-	|| (ee->request_code == X_ConfigureWindow && ee->error_code == BadMatch)
-	|| (ee->request_code == X_GrabButton && ee->error_code == BadAccess)
-	|| (ee->request_code == X_GrabKey && ee->error_code == BadAccess)
-	|| (ee->request_code == X_CopyArea && ee->error_code == BadDrawable))
+	|| (ee->request_code == X_PolySegment       && ee->error_code == BadDrawable)
+	|| (ee->request_code == X_ConfigureWindow   && ee->error_code == BadMatch)
+	|| (ee->request_code == X_GrabButton        && ee->error_code == BadAccess)
+	|| (ee->request_code == X_GrabKey           && ee->error_code == BadAccess)
+	|| (ee->request_code == X_CopyArea          && ee->error_code == BadDrawable))
 		return 0;
 	fprintf(stderr, "plx: fatal error: request code=%d, error code=%d\n",
 		ee->request_code, ee->error_code);

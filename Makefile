@@ -3,9 +3,9 @@
 #================================ Parameters ==================================
 
 CC     ?= cc
-CSTD    = c89
+CSTD    = c99
 IFLAGS  = -I/usr/lib/swipl/include -I/usr/lib/swi-prolog/include -I/usr/include/freetype2
-WFLAGS  = -W -Wall -Wextra -Wconversion -Wfloat-equal -Wshadow
+WFLAGS  = -Wall -Wextra -Wconversion -Wshadow -pedantic -pedantic-errors
 OFLAGS  = -O2
 
 CFLAGS  = -std=$(CSTD) $(IFLAGS) $(WFLAGS) $(OFLAGS) -fpic
@@ -33,7 +33,7 @@ plx.so: src/plx.o
 clean:
 	rm -f src/plx.o plx.so plwm
 
-rebuild: clean build
+rebuild: clean plwm
 
 #============================== Static checks =================================
 
