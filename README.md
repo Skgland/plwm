@@ -374,7 +374,7 @@ The `menu` module is fully optional, but there are keybindings for it too by def
 | alt + shift + k | `menu:list_keymaps`      | List all defined keymaps, their mapped actions, descriptions of said actions and execute the selected. Useful for early discoverability or running forgotten or rarely used mappings |
 | alt + shift + c | `menu:list_cmds`         | List all available commands (i.e., predicates intended to be called by the user) and their descriptions, then execute the selected. Again, adds discoverability for new users. Can also be useful to run rare commands which have no mappings defined or even custom logic hacked into plwm (you'll need to add your predicates to `menu:list_cmds/0` and `menu:cmd_desc/2`) |
 
-These predicates need `menucmd/1` set in the config to a program like [dmenu](https://tools.suckless.org/dmenu/) or [rofi](https://github.com/davatorium/rofi). For example:
+These predicates need `menucmd/1` set in the config to a program like [dmenu](https://tools.suckless.org/dmenu/) or [rofi](https://davatorium.github.io/rofi/). For example:
 
 ```Prolog
 menucmd(["dmenu", "-i", "-l", "20", "-p"]).
@@ -479,7 +479,7 @@ plwm is minimal in the sense that it doesn't try to solve problems outside of a 
 * Don't want a status bar? You're set. Want one (or more)? Here are a few: [polybar](https://polybar.github.io/), [lemonbar](https://github.com/LemonBoy/bar), [xmobar](https://codeberg.org/xmobar/xmobar)
 * Want transparent windows or other effects? Use a compositor like [picom](https://wiki.archlinux.org/title/Picom)
 * Want tabbed windows? Use [tabbed](https://tools.suckless.org/tabbed/)
-* Program launcher? [dmenu](https://tools.suckless.org/dmenu/) or [rofi](https://github.com/davatorium/rofi) will get you covered
+* Program launcher? [dmenu](https://tools.suckless.org/dmenu/) or [rofi](https://davatorium.github.io/rofi/) will get you covered
 * Auto hide cursor? Try [unclutter](https://wiki.archlinux.org/title/Unclutter)
 * Wallpaper? Many image viewers can set it, [feh](https://wiki.archlinux.org/title/Feh) for example
 * Screen locker? Check out [slock](https://tools.suckless.org/slock/)
