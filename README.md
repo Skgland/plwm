@@ -364,7 +364,7 @@ The `menu` module is fully optional, but there are keybindings for it too by def
 | --------------- | ------------------------ | ------------------------------------------------------------- |
 | alt + c         | `menu:create_workspace`  | Prompt for a name and append it to the list of workspaces     |
 | alt + r         | `menu:rename_workspace`  | Prompt for a name and rename the active workspace to it       |
-| alt + shift + r | `menu:reindex_workspace` | List possible workspace indices and move the active one to the selected index |
+| alt + i         | `menu:reindex_workspace` | List possible workspace indices and move the active one to the selected index |
 | alt + d         | `menu:delete_workspace`  | List workspaces and delete the selected (its windows, if any, will be moved to the next workspace) - **Note:** deleting is not allowed if only one workspace is left |
 
 **Extras**
