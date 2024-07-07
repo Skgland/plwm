@@ -254,13 +254,13 @@ keybind_padded([C|Cs], [C|Rest]) :- keybind_padded(Cs, Rest).
 
 change_nmaster_prompt() :-
 	(read_from_prompt("nmaster (+N, -N or N)", Input) ->
-		ignore((catch(term_string(N, Input), _, fail), change_nmaster(N)))
+		ignore((catch(term_string(N, Input), Ex, (writeln(Ex), fail)), change_nmaster(N)))
 	; true)
 .
 
 change_mfact_prompt() :-
 	(read_from_prompt("mfact (+F, -F or F)", Input) ->
-		ignore((catch(term_string(F, Input), _, fail), change_mfact(F)))
+		ignore((catch(term_string(F, Input), Ex, (writeln(Ex), fail)), change_mfact(F)))
 	; true)
 .
 

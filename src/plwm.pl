@@ -1423,7 +1423,7 @@ load_runtime_config() :- % -c can specify an absolute path or a relative from $H
 	config_flag(Cnf),
 	(is_absolute_file_name(Cnf) -> CnfPath = Cnf
 	; getenv('HOME', Home), atom_concat(Home, '/', CnfDir), atom_concat(CnfDir, Cnf, CnfPath)),
-	catch(use_module(CnfPath), _, true) % might not exist
+	catch(use_module(CnfPath), _, (writeln("No runtime config loaded"), true)) % might not exist
 .
 
 opts_spec([

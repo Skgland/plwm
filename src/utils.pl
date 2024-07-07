@@ -26,7 +26,8 @@ ensure_ampersand(CmdStr, NewCmdStr) :-
 	startswith_char(CListRev, '&') -> NewCmdStr = CmdStr ; string_concat(CmdStr, "&", NewCmdStr)
 .
 
-shellcmd(Cmd) :- catch(ignore((ensure_ampersand(Cmd, CmdBg), shell(CmdBg))), _, true). % let's not block or kill ourselves
+% Let's not block or kill ourselves
+shellcmd(Cmd) :- catch(ignore((ensure_ampersand(Cmd, CmdBg), shell(CmdBg))), Ex, (writeln(Ex), true)).
 
 warn_invalid_arg(Pred, Arg) :-
 	format(string(Msg), "warning: invalid argument to ~s: ~p, ignored", [Pred, Arg]),
