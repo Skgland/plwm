@@ -1362,7 +1362,7 @@ check_config() :-  % when config is invalid, quit right away with a nice error m
 	optcnf_then(bar_placement(BPlace), member(BPlace, [follow_focus, static])) - "bar_placement must be follow_focus or static",
 	optcnf_then(fifo_enabled(CFifoE), (CFifoE = true ; CFifoE = false))       - "fifo_enabled must be true or false",
 	optcnf_then(fifo_path(CFifoPath), string(CFifoPath))                      - "fifo_path must be a string",
--	optcnf_then(menucmd([A|As]), forall(member(Arg, [A|As]), string(Arg))) - "menucmd must be a non-empty list of strings",
+	optcnf_then(menucmd([A|As]), forall(member(Arg, [A|As]), string(Arg))) - "menucmd must be a non-empty list of strings",
 
 	optcnf_then(rules(Rules),
 		forall(member((RName, RClass, RTitle -> RMon, RWs, RMode), Rules), (
