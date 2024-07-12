@@ -470,6 +470,8 @@ done
 
 **!!! Disclaimer:** plwm is still in an experimental state. First stable release will be v1.0. While crashes or other major bugs don't really occur, it's good to keep this in mind **!!!**
 
+Also, this means that breaking changes (e.g. renaming of settings) are to be expected before reaching v1.0. We plan on switching to [semantic versioning](https://semver.org/) from that point onwards.
+
 For known problems, see [the Issues with bug labels](https://github.com/Seeker04/plwm/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
 
 # Contribution
