@@ -223,7 +223,7 @@ While cooking your config, you can use the `-C` flag to quickly and easily check
 | `bar_class`                | the two strings from bar's WM_CLASS,<br/>query with [xprop(1)](https://linux.die.net/man/1/xprop)<br>**Default:** "polybar", "Polybar" | Space will be reserved for matching windows and they cannot be focused, resized, etc. |
 | `bar_placement`            | follow_focus, static<br>**Default:** follow_focus               | Determines placement of external bars (explained [here](#layout-overrides)) |
 | `startupcmd`               | string<br>**Default:** -                                        | Command to spawn at startup (e.g., for auto launching bars or compositors) |
-| `fifo_enabled`             | true or false<br>**Default:** false                             | Whether to spawn a command FIFO                 |
+| `fifo_enabled`             | true or false<br>**Default:** false                             | Whether to spawn a command FIFO<br>(explained [here](#scriptability)) |
 | `fifo_path`                | string<br>**Default:** "/tmp/plwm_fifo"                         | Path of command FIFO                            |
 | `menucmd`                  | list of strings<br>**Default:** ["dmenu", "-i", "-l", "20", "-p"] | Command and its arguments to use for menu operations |
 | `modkey`                   | shift, lock, ctrl, alt, mod2, mod3, super, mod5<br>**Default:** super | Key you must hold for mouse operations |
