@@ -181,9 +181,16 @@ then you'll have a triple stack layout where your windows will be evenly spread 
 
 Configuration is done by modifying [config.pl](src/config.pl) then recompiling with `make && sudo make install`.
 
-Optionally, plwm will attempt to read settings from `$HOME/.config/plwm/config.pl` if it exists, so users don't have to recompile each time if they don't wish to. Any values read from this runtime config will override the compiled in settings.
+plwm will also attempt reading configuration when it starts from the first file among
+- `$XDG_CONFIG_HOME/plwm/config.pl`
+- `$HOME/.config/plwm/config.pl`
+- `/etc/plwm/config.pl`
 
-You can redefine the above path with the `-c` flag, which takes an absolute path or one relative to `$HOME`.
+if any exists, so users don't have to recompile each time if they don't wish to. Any values read from the runtime config will override the compiled in settings.
+
+A custom path can be specified with the `-c` flag.
+
+**Attention:** the module name in the runtime config must be `runtime_config`!
 
 You can run:
 
@@ -191,7 +198,7 @@ You can run:
 
 which takes `src/config.pl` and generates the runtime config from it. Then keep modifying the latter while leaving the former in the default state. Or you can use the source one as a stable config and the runtime one for experimental overrides...
 
-When cooking your config, you can use the `-C` flag to quickly and easily check its validity.
+While cooking your config, you can use the `-C` flag to quickly and easily check its validity.
 
 `config.pl` is self-documenting with lots of comments, but here is a quick reference:
 

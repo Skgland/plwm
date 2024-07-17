@@ -20,7 +20,13 @@ Display version, then exit.
 Path to logfile or stdout.
 .TP
 .B \-c, --config=FILE
-Path to user configuration. Can be an absolute path or a relative one from \fB$HOME\fR. Default value: \fB.config/plwm/config\fR.
+Path to user configuration. If not specified, plwm will try loading the first from the following files:
+
+\fB$XDG_CONFIG_HOME/plwm/config.pl\fR
+
+\fB$HOME/.config/plwm/config.pl\fR
+
+\fB/etc/plwm/config.pl\fR
 .TP
 .B \-C, --check
 Check configuration validity, then exit.

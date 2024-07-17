@@ -17,7 +17,12 @@ SWIFLAGS = -p foreign=$(INSTALLDIR_LIB) \
 INSTALLDIR     = /usr/local/bin
 INSTALLDIR_LIB = /usr/local/lib
 INSTALLDIR_MAN = /usr/local/share/man/man1
-CONFIG_PATH    = $(HOME)/.config/plwm
+
+ifdef XDG_CONFIG_HOME
+CONFIG_PATH = $(XDG_CONFIG_HOME)/plwm
+else
+CONFIG_PATH = $(HOME)/.config/plwm
+endif
 
 #================================== Build =====================================
 

@@ -1419,11 +1419,40 @@ optcnf_then_else(OptCnf, Then, Else) :- % condition on existence of optional set
 
 optcnf_then(OptCnf, Then) :- optcnf_then_else(OptCnf, Then, true).
 
-load_runtime_config() :- % -c can specify an absolute path or a relative from $HOME
-	config_flag(Cnf),
-	(is_absolute_file_name(Cnf) -> CnfPath = Cnf
-	; getenv('HOME', Home), atom_concat(Home, '/', CnfDir), atom_concat(CnfDir, Cnf, CnfPath)),
-	catch(use_module(CnfPath), _, (writeln("No runtime config loaded"), true)) % might not exist
+load_custom_config() :-
+	config_flag(UserC) ->
+		catch(use_module(UserC), Ex, (writeln(Ex), fail))
+.
+
+load_xdg_config(PathSuffix) :-
+	getenv('XDG_CONFIG_HOME', XdgConfHome) ->
+		atom_concat(XdgConfHome, PathSuffix, XdgConf),
+		catch(use_module(XdgConf), Ex, (writeln(Ex), fail))
+.
+
+load_home_config(PathSuffix) :-
+	getenv('HOME', Home) ->
+		atom_concat(Home, '/.config', HomeCDir), atom_concat(HomeCDir, PathSuffix, HomeConf),
+		catch(use_module(HomeConf), Ex, (writeln(Ex), fail))
+.
+
+load_etc_config(PathSuffix) :-
+	atom_concat('/etc', PathSuffix, EtcConf),
+	catch(use_module(EtcConf), Ex, (writeln(Ex), fail))
+.
+
+% Try loading in this order:
+%   path set with -c (if any)
+%   $XDG_CONFIG_HOME/plwm/config.pl
+%   $HOME/.config/plwm/config.pl
+%   /etc/plwm/config.pl
+load_runtime_config() :-
+	PathSuffix = '/plwm/config.pl',
+	(load_custom_config            -> writeln("-c user config loaded")
+	; load_xdg_config(PathSuffix)  -> writeln("xdg config loaded")
+	; load_home_config(PathSuffix) -> writeln("home config loaded")
+	; load_etc_config(PathSuffix)  -> writeln("etc config loaded")
+	; true)
 .
 
 opts_spec([
@@ -1431,21 +1460,21 @@ opts_spec([
 	[opt(version),type(boolean),default(false), shortflags([v]),  longflags([version]),help('display version info')],
 	[opt(log),    type(atom),   default(stdout),shortflags([l]),  longflags([log]),    help('path to logfile, or \'stdout\'')],
 	[opt(check),  type(boolean),default(false), shortflags(['C']),longflags([check]),  help('check config validity and exit')],
-	[opt(config), type(atom),   default('.config/plwm/config'), shortflags([c]), longflags([config]), help('path to user config from $HOME')]
+	[opt(config), type(atom),   default(unset), shortflags([c]),  longflags([config]), help('path to user config')]
 ]).
 
 parse_opt(help(true)) :-
 	writeln("Usage: plwm [OPTION]..."),
 	opts_spec(OptsSpec), opt_help(OptsSpec, Help), writeln(Help), quit.
 parse_opt(version(true)) :- version(V), write("plwm version "), writeln(V), quit.
-parse_opt(config(Cnf)) :- assertz(config_flag(Cnf)).
+parse_opt(config(Cnf)) :- (Cnf \= unset -> assertz(config_flag(Cnf)) ; true).
 parse_opt(log(Log)) :-
 	(Log \= stdout ->
 		open(Log, write, S, [buffer(line)]), set_output(S),
 		set_stream(S, alias(user_output)),
 		set_stream(S, alias(user_error))
 	; true).
-	parse_opt(check(true)) :- load_runtime_config, check_config, quit.
+parse_opt(check(true)) :- load_runtime_config, check_config, quit.
 parse_opt(help(false)). parse_opt(version(false)). parse_opt(check(false)).
 
 main() :-
