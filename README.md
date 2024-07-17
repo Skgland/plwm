@@ -63,7 +63,7 @@ On Ubuntu 22.04 you can install them with:
 
 Run:
 
-`$ sudo make install`
+`$ make && sudo make install`
 
 By default, this will install plwm to `/usr/local/bin/`. The location can be adjusted in the [Makefile](Makefile).
 
@@ -179,7 +179,7 @@ then you'll have a triple stack layout where your windows will be evenly spread 
 
 ## Configuration
 
-Configuration is done by modifying [config.pl](src/config.pl) then recompiling with `sudo make install`.
+Configuration is done by modifying [config.pl](src/config.pl) then recompiling with `make && sudo make install`.
 
 Optionally, plwm will attempt to read settings from `$HOME/.config/plwm/config.pl` if it exists, so users don't have to recompile each time if they don't wish to. Any values read from this runtime config will override the compiled in settings.
 
