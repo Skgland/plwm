@@ -465,7 +465,8 @@ switch_monitor(To) :-
 					% move the bar(s) to the newly active monitor
 				; true)
 			)),
-			update_ws_atoms
+			update_ws_atoms,
+			update_workarea
 		; true)
 	; utils:warn_invalid_arg("switch_monitor", To))
 .
@@ -704,6 +705,16 @@ update_ws_atoms() :-
 
 	nth0(WsIdx, WssToUse, ActWs),  % this must always be updated
 	plx:x_change_property(Dp, Rootwin, NetCurrentDesktop, XA_CARDINAL, 32, PropModeReplace, [WsIdx], 1)
+.
+
+update_workarea() :-
+	display(Dp), rootwin(Rootwin), nb_getval(active_mon, ActMon),
+	global_key_value(free_win_space, ActMon, Geom),
+	nb_getval(workspaces, Wss), length(Wss, WsCnt),
+	utils:n_item_clones(WsCnt, Geom, Geoms), flatten(Geoms, Geoms1D),
+	netatom(workarea, NetWorkArea),
+	XA_CARDINAL is 6, PropModeReplace is 0, DataCnt is WsCnt * 4,
+	plx:x_change_property(Dp, Rootwin, NetWorkArea, XA_CARDINAL, 32, PropModeReplace, Geoms1D, DataCnt)
 .
 
 update_wintype(Win) :-
@@ -1046,6 +1057,8 @@ handle_event(configurenotify, [_, _, _, _, _, Win, _, _, _, _, _, _, _]) :-
 			forall(member(Mon, MonsToDelete), delete_monitor(Mon))
 		; true),
 
+		update_free_win_space,
+
 		% Notice of pending jobs is also implemented with a ConfigureNotify
 		(utils:jobs(Jobs) ->
 			forall(member(Job, Jobs),
@@ -1199,20 +1212,11 @@ update_free_win_space() :-
 			NewY is min(Y + GapPixel, Y + H), NewH is max(1, H - 2 * GapPixel),
 			global_key_newvalue(free_win_space, Mon, [NewX, NewY, NewW, NewH])
 		)),
-		nb_getval(active_mon, ActMon),
-		(Mon == ActMon ->
-			rootwin(Rootwin),
-			global_key_value(free_win_space, Mon, Geom),
-			nb_getval(workspaces, Wss), length(Wss, WsCnt),
-			utils:n_item_clones(WsCnt, Geom, Geoms), flatten(Geoms, Geoms1D),
-			netatom(workarea, NetWorkArea),
-			XA_CARDINAL is 6, PropModeReplace is 0, DataCnt is WsCnt * 4,
-			plx:x_change_property(Dp, Rootwin, NetWorkArea, XA_CARDINAL, 32, PropModeReplace, Geoms1D, DataCnt)
-		; true),
 
 		global_key_value(active_ws, Mon, ActWs),
 		layout:relayout(Mon-ActWs)
-	))
+	)),
+	update_workarea
 .
 
 update_clientlist() :-
