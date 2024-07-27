@@ -1086,19 +1086,24 @@ xinerama_query_screens(term_t display, term_t screen_info)
 
 	subts = malloc((size_t)num * 5 * sizeof(term_t));
 	for (int i = 0; i < num; ++i) {
-		subts[i * 5 + 0] = PL_new_term_ref(); PL_TRY(PL_put_integer(subts[i * 5 + 0], scrinfo[i].screen_number), free(subts));
-		subts[i * 5 + 1] = PL_new_term_ref(); PL_TRY(PL_put_integer(subts[i * 5 + 1], scrinfo[i].x_org), free(subts));
-		subts[i * 5 + 2] = PL_new_term_ref(); PL_TRY(PL_put_integer(subts[i * 5 + 2], scrinfo[i].y_org), free(subts));
-		subts[i * 5 + 3] = PL_new_term_ref(); PL_TRY(PL_put_integer(subts[i * 5 + 3], scrinfo[i].width), free(subts));
-		subts[i * 5 + 4] = PL_new_term_ref(); PL_TRY(PL_put_integer(subts[i * 5 + 4], scrinfo[i].height), free(subts));
+		subts[i * 5 + 0] = PL_new_term_ref();
+		subts[i * 5 + 1] = PL_new_term_ref();
+		subts[i * 5 + 2] = PL_new_term_ref();
+		subts[i * 5 + 3] = PL_new_term_ref();
+		subts[i * 5 + 4] = PL_new_term_ref();
+		PL_TRY(PL_put_integer(subts[i * 5 + 0], scrinfo[i].screen_number), XFree(scrinfo); free(subts));
+		PL_TRY(PL_put_integer(subts[i * 5 + 1], scrinfo[i].x_org),         XFree(scrinfo); free(subts));
+		PL_TRY(PL_put_integer(subts[i * 5 + 2], scrinfo[i].y_org),         XFree(scrinfo); free(subts));
+		PL_TRY(PL_put_integer(subts[i * 5 + 3], scrinfo[i].width),         XFree(scrinfo); free(subts));
+		PL_TRY(PL_put_integer(subts[i * 5 + 4], scrinfo[i].height),        XFree(scrinfo); free(subts));
 	}
 	build_list(list, subts, (size_t)num * 5);
 
+	XFree(scrinfo);
+	free(subts);
 	if (!PL_unify(list, screen_info)) {
-		free(subts);
 		return (foreign_t)PL_warning("xinerama_query_screens/2: PL_unify() on 'screen_info' failed!");
 	}
-	free(subts);
 	PL_succeed;
 }
 
