@@ -366,7 +366,7 @@ The `menu` module is fully optional, but there are keybindings for it too by def
 | --------------- | ------------------------ | ------------------------------------------------------------- |
 | alt + w         | `menu:goto_window`       | List windows from all monitors/workplaces, go to monitor/workspace of selected, then raise and focus the window |
 | alt + shift + w | `menu:goto_workspace`    | List monitors/workspaces, except current, then go to selected |
-| alt + p         | `menu:pull_from`         | List windows from all monitors/workspaces, except current, then pull selected to the active monitor/workspace and focus it |
+| alt + p         | `menu:pull_from`         | List windows from all monitors/workspaces, except current, then pull selected ones to the active monitor/workspace and focus it |
 | alt + shift + p | `menu:push_to`           | List monitors/workspaces, except current, then push the focused window to the selected |
 
 **Dynamic workspace operations**
@@ -376,7 +376,7 @@ The `menu` module is fully optional, but there are keybindings for it too by def
 | alt + c         | `menu:create_workspace`  | Prompt for a name and append it to the list of workspaces     |
 | alt + r         | `menu:rename_workspace`  | Prompt for a name and rename the active workspace to it       |
 | alt + i         | `menu:reindex_workspace` | List possible workspace indices and move the active one to the selected index |
-| alt + d         | `menu:delete_workspace`  | List workspaces and delete the selected (its windows, if any, will be moved to the next workspace) - **Note:** deleting is not allowed if only one workspace is left |
+| alt + d         | `menu:delete_workspace`  | List workspaces and delete the selected ones (its windows, if any, will be moved to the next workspace) - **Note:** deleting is not allowed if only one workspace is left |
 
 **Extras**
 
@@ -398,6 +398,8 @@ menucmd(["rofi", "-dmenu"]).
 ```
 
 **Note:** A prompt name will be written as last argument for `menucmd/1`, so if you are using dmenu, you should add `-p` as final argument.
+
+**Note:** `pull_from` and `delete_workspace` can operate on multiple selections (Ctrl+Enter in dmenu by default).
 
 ## Scriptability
 
