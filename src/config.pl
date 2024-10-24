@@ -220,7 +220,7 @@ keymaps([
   alt + c                   ->  menu:create_workspace           ,
   alt + r                   ->  menu:rename_workspace           ,
   alt + i                   ->  menu:reindex_workspace          ,
-  alt + d                   ->  menu:delete_workspace           ,
+  alt + d                   ->  menu:delete_workspaces          ,
 
   alt + shift + k           ->  menu:list_keymaps               ,
   alt + shift + c           ->  menu:list_cmds                  ,

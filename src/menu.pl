@@ -187,7 +187,7 @@ reindex_workspace() :- % will reindex the active one
 .
 reindex_workspace_(Ws, [Selection]) :- number_string(Idx, Selection), reindex_workspace(Ws, Idx).
 
-delete_workspace() :-
+delete_workspaces() :-
 	nb_getval(workspaces, Wss),
 	(Wss \= [_] ->  % don't even spawn the list if there is only one ws left
 		findall(WsStr, (member(Ws, Wss), atom_string(Ws, WsStr)), Lines),
@@ -264,7 +264,7 @@ cmd_desc(menu:keep_windows     , "Close all windows other than the selected").
 cmd_desc(menu:create_workspace , "Create new workspaces").
 cmd_desc(menu:rename_workspace , "Rename selected workspace").
 cmd_desc(menu:reindex_workspace, "Reindex selected workspace").
-cmd_desc(menu:delete_workspace , "Delete selected workspace").
+cmd_desc(menu:delete_workspaces, "Delete selected workspaces").
 cmd_desc(menu:list_keymaps     , "List all defined keymaps").
 cmd_desc(shellcmd(Cmd), D) :- format(string(D), "Run `~s`", [Cmd]).
 cmd_desc(shellcmd, "Run a shell command").
@@ -408,7 +408,7 @@ list_cmds() :-
 		menu:create_workspace,
 		menu:rename_workspace,
 		menu:reindex_workspace,
-		menu:delete_workspace,
+		menu:delete_workspaces,
 		menu:list_keymaps,
 		shellcmd
 		]

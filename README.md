@@ -378,7 +378,7 @@ The `menu` module is fully optional, but there are keybindings for it too by def
 | alt + c         | `menu:create_workspace`  | Prompt for a name and append it to the list of workspaces     |
 | alt + r         | `menu:rename_workspace`  | Prompt for a name and rename the active workspace to it       |
 | alt + i         | `menu:reindex_workspace` | List possible workspace indices and move the active one to the selected index |
-| alt + d         | `menu:delete_workspace`  | List workspaces and delete the selected ones (its windows, if any, will be moved to the next workspace) - **Note:** deleting is not allowed if only one workspace is left |
+| alt + d         | `menu:delete_workspaces` | List workspaces and delete the selected ones (its windows, if any, will be moved to the next workspace) - **Note:** deleting is not allowed if only one workspace is left |
 
 **Extras**
 
@@ -401,7 +401,7 @@ menucmd(["rofi", "-dmenu"]).
 
 **Note:** A prompt name will be written as last argument for `menucmd/1`, so if you are using dmenu, you should add `-p` as final argument.
 
-**Note:** `pull_from`, `delete_workspace`, `close_windows` and `keep_windows` can operate on multiple selections. Use Ctrl+Enter in dmenu, or Shift+Enter with `-dmenu -multi-select` in rofi.
+**Note:** `pull_from`, `delete_workspaces`, `close_windows` and `keep_windows` can operate on multiple selections. Use Ctrl+Enter in dmenu, or Shift+Enter with `-dmenu -multi-select` in rofi.
 
 ## Scriptability
 
