@@ -9,7 +9,7 @@ setup_fifo() :-
 		shell(MkFifoCmd, ExitCode),
 		(ExitCode == 0 ->
 			thread_create(fifo:process_fifo(FifoPath), _, [detached(true)])
-		; true)
+		; writeln(user_error, "Could not spawn command fifo!"))
 	)))
 .
 
