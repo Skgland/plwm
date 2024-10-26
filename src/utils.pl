@@ -8,7 +8,7 @@
 bool_negated(true, false).
 bool_negated(false, true).
 
-is_float(X) :- float(X) ; (X = N/D, integer(N), integer(D)).
+is_float(X) :- float(X), ! ; (X = N/D, integer(N), integer(D)).
 
 dumpstack() :- % for debugging
 	open('/tmp/plwm_stack.log', append, S),
@@ -79,6 +79,7 @@ swap_with_next([X|Xs], Y, [X|Rest]) :- X \= Y, swap_with_next(Xs, Y, Rest).
 
 n_item_clones(0, _, []) :- !.
 n_item_clones(N, T, [T|Ts]) :-
+	N > 0,
 	Nminus1 is N - 1,
 	n_item_clones(Nminus1, T, Ts)
 .
