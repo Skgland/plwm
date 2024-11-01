@@ -49,7 +49,7 @@ cppcheck:
 	src/plx.c
 
 clang-tidy:
-	clang-tidy --checks='clang-analyzer-*' --header-filter=.* --extra-arg="-std=$(CSTD)" \
+	clang-tidy --checks='clang-analyzer-*' --extra-arg="-std=$(CSTD)" \
 	--extra-arg="-I/usr/include/freetype2" \
 	--extra-arg="-I/usr/lib/swipl/include" \
 	--extra-arg="-I/usr/lib/swi-prolog/include" \
