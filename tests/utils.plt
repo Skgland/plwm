@@ -1,3 +1,5 @@
+% MIT License, Copyright (c) 2023 Barnabás Zahorán, see LICENSE
+
 % helpers
 plus2(N, M) :- M is N + 2.
 times3(N, M) :- M is N * 3.

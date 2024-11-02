@@ -1,3 +1,5 @@
+% MIT License, Copyright (c) 2023 Barnabás Zahorán, see LICENSE
+
 % mocks
 optcnf_then(fifo_enabled(true), Then) :- Then.
 optcnf_then(fifo_path(FifoPath), Then) :- FifoPath = "/tmp/test-fifo", Then.
