@@ -8,7 +8,8 @@ from_to_in_steps(From, To, StepCnt, Steps) :-
 	Distance is To - From,
 	Step is round(Distance / StepCnt),
 	utils:n_step_list(StepCnt, plus(Step), [From|Rest]),
-	append(Rest, [To], Steps)
+	append(Rest, [To], Steps),
+	!
 .
 
 merge_geom_lists([], [], [], [], []).

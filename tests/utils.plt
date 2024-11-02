@@ -453,6 +453,22 @@ test("alternate_merge -") :-
 	assertion(\+ (utils:alternate_merge( [A] , [B] , [B, A]) , A \= B ))
 .
 
+test("pair_up_lists +") :-
+	assertion(utils:pair_up_lists( []        , []        , []              )),
+	assertion(utils:pair_up_lists( [a]       , [x]       , [a-x]           )),
+	assertion(utils:pair_up_lists( [a, b]    , [x, y]    , [a-x, b-y]      )),
+	assertion(utils:pair_up_lists( [a, b, c] , [x, y, z] , [a-x, b-y, c-z] ))
+.
+
+test("pair_up_lists -") :-
+	assertion(\+ utils:pair_up_lists( []     , []     , [_|_] )),
+	assertion(\+ utils:pair_up_lists( []     , [_|_]  , _     )),
+	assertion(\+ utils:pair_up_lists( [_|_]  , []     , _     )),
+	assertion(\+ utils:pair_up_lists( [_, _] , [_]    , _     )),
+	assertion(\+ utils:pair_up_lists( [_]    , [_, _] , _     )),
+	assertion(\+ (utils:pair_up_lists([A], [X], [A-X] ), A \= X))
+.
+
 test("str_withoutlastch +") :-
 	assertion(utils:str_withoutlastch("a", "")),
 	assertion(utils:str_withoutlastch("aa", "a")),
