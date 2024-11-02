@@ -3,6 +3,7 @@
 :- module(layout, []).
 
 :- use_module(animation).
+:- use_module(utils).
 
 % Supported layouts: (feel free to implement your own)
 is_layout(Layout) :- member(Layout, [

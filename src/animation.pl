@@ -2,6 +2,8 @@
 
 :- module(animation, []).
 
+:- use_module(utils).
+
 from_to_in_steps(From, To, StepCnt, Steps) :-
 	Distance is To - From,
 	Step is round(Distance / StepCnt),

@@ -2,6 +2,9 @@
 
 :- module(menu, []).
 
+:- use_module(layout).
+:- use_module(utils).
+
 spawn_menu(_, [], _) :- !.
 spawn_menu(Prompt, Entries, Callback) :-
 	optcnf_then(menucmd([MenuCmd|MenuArgs]), (
