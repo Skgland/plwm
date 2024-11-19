@@ -292,7 +292,7 @@ shift_focus(Direction) :-
 raise(Win) :-
 	display(Dp),
 	CWStackMode is 1 << 6, Above is 0,
-	x_configure_window(Dp, Win, CWStackMode, 0, 0, 0, 0, 0, 0, Above)
+	plx:x_configure_window(Dp, Win, CWStackMode, 0, 0, 0, 0, 0, 0, Above)
 .
 
 hide(Win) :-

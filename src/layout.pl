@@ -49,7 +49,7 @@ set_layout(Mon-Ws, Layout) :-
 		forall((member(Win, Wins), win_properties(Win, [_, true|_])), (
 			plx:x_move_resize_window(Dp, Win, MX, MY, MW, MH),
 			CWStackMode is 1 << 6, Above is 0,
-			x_configure_window(Dp, Win, CWStackMode, 0, 0, 0, 0, 0, 0, Above)
+			plx:x_configure_window(Dp, Win, CWStackMode, 0, 0, 0, 0, 0, 0, Above)
 		))
 	;
 		utils:warn_invalid_arg("set_layout", Layout))
