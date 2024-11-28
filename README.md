@@ -463,12 +463,6 @@ done
 for i in {1..9}; do
     echo "create_workspace($i)."
 done > /tmp/plwm_fifo
-
-# another solution is to add a little delay
-for i in {1..9}; do
-    echo "create_workspace($i)." > /tmp/plwm_fifo
-    sleep .001
-done
 ```
 
 # Screenshots
