@@ -49,7 +49,10 @@ test("process_fifo", [
 		optcnf_then(fifo_path(FifoPath), true),
 		string_concat("mkfifo ", FifoPath, MkFifoCmd),
 		shell(MkFifoCmd)
-	))
+	)),
+	cleanup(
+		delete_file(FifoPath)
+	)
 ]) :-
 	string_concat("sleep .1; echo 't1.' >> ", FifoPath, S),
 	string_concat(S, " &", WriteFifoCmd),
