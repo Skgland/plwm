@@ -48,7 +48,7 @@ static foreign_t x_send_event(term_t display, term_t w, term_t propagate, term_t
 static foreign_t x_raise_window(term_t display, term_t w);
 static foreign_t x_get_window_attributes(term_t display, term_t w, term_t window_attributes_return, term_t status);
 static foreign_t x_move_resize_window(term_t display, term_t w, term_t x, term_t y, term_t width, term_t height);
-static foreign_t x_change_window_attributes(term_t display, term_t w, term_t valuemask, term_t attributes);
+static foreign_t x_change_window_attributes(term_t display, term_t w, term_t valuemask, term_t event_mask);
 static foreign_t x_select_input(term_t display, term_t w, term_t event_mask);
 static foreign_t x_map_window(term_t display, term_t w);
 static foreign_t x_configure_window(term_t display, term_t w, term_t value_mask, term_t x, term_t y, term_t width,

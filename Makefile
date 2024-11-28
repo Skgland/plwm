@@ -43,7 +43,7 @@ rebuild: clean plwm
 #============================== Static checks =================================
 
 cppcheck:
-	cppcheck -q --enable=all --language=c --std=$(CSTD) \
+	cppcheck -q --enable=all --inconclusive --language=c --std=$(CSTD) \
 	--suppress=missingIncludeSystem \
 	--check-level=exhaustive \
 	src/plx.c
