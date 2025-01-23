@@ -21,7 +21,7 @@
 :- dynamic netatom/2.
 :- dynamic jobs/1 as shared.
 
-version(0.2).
+version(0.3).
 
 %*********************************  Globals  **********************************
 %
