@@ -13,7 +13,7 @@ plx:x_sync(Dp, Discard) :-
 
 :- begin_tests(animation_tests).
 
-:- use_module("../src/animation").
+:- use_module("../../src/animation").
 
 test("from_to_in_steps +") :-
 	% zero .. zero

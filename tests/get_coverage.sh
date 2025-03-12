@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# MIT License, Copyright (c) 2023 Barnabás Zahorán, see LICENSE
+
 [[ "$1" == "-v" || "$1" == "--verbose" ]] && verbose=1
 
 ignore_list="xf86names.pl config.pl"
@@ -11,11 +13,11 @@ for src in src/*.pl; do
 		continue
 	fi
 
-	preds=$(egrep "^\w.*\(.*\)( :-|.)" $src | cut -d'(' -f1 | grep -v "_$" | sort -u)
+	preds=$(egrep "^\w.*\(.*\)(:-|.)" $src | cut -d'(' -f1 | grep -v "_$" | sort -u)
 
 	pred_cnt=$(wc -l <<< $preds)
 	covered_cnt=0
-	testfile="$(sed 's/src/tests/' <<< $src)t"
+	testfile="$(sed 's/src/tests\/unit_tests/' <<< $src)t"
 	if [[ -r $testfile ]]; then
 		for pred in $preds; do
 			if grep -q "^test(\"${pred}\>" $testfile; then

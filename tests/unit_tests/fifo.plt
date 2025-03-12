@@ -6,7 +6,7 @@ optcnf_then(fifo_path(FifoPath), Then) :- FifoPath = "/tmp/test-fifo", Then.
 
 :- begin_tests(fifo_tests).
 
-:- use_module("../src/fifo").
+:- use_module("../../src/fifo").
 
 test("setup_fifo +", [
 	setup(

@@ -6,7 +6,7 @@ times3(N, M) :- M is N * 3.
 
 :- begin_tests(utils_tests).
 
-:- use_module("../src/utils").
+:- use_module("../../src/utils").
 
 test("valid_callable +") :-
 	assertion(utils:valid_callable(true)),
