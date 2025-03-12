@@ -432,20 +432,20 @@ hooks([
 
 Supported events:
 
-| Event                 | Description                                            |
-| --------------------- | ------------------------------------------------------ |
-| start                 | after all initialization, but before main X event loop |
-| quit                  | before quitting, also before calling XCloseDisplay(3)  |
-| switch_workspace_pre  | before switching workspace                             |
-| switch_workspace_post | after switching workspace                              |
-| switch_monitor_pre    | before switching monitor                               |
-| switch_monitor_post   | after switching monitor                                |
-| window_create_pre     | before a window is mapped (won't run for bars)         |
-| window_create_post    | after a window is mapped (won't run for bars)          |
-| window_destroy_pre    | before a window is unmapped (won't run for bars)       |
-| window_destroy_post   | after a window is unmapped (won't run for bars)        |
+| Event                   | Description                                             |
+| ----------------------- | ------------------------------------------------------- |
+| `start`                 | after all initialization, but before main X event loop  |
+| `quit`                  | before quitting, also before calling `XCloseDisplay(3)` |
+| `switch_workspace_pre`  | before switching workspace                              |
+| `switch_workspace_post` | after switching workspace                               |
+| `switch_monitor_pre`    | before switching monitor                                |
+| `switch_monitor_post`   | after switching monitor                                 |
+| `window_create_pre`     | before a window is mapped (won't run for bars)          |
+| `window_create_post`    | after a window is mapped (won't run for bars)           |
+| `window_destroy_pre`    | before a window is unmapped (won't run for bars)        |
+| `window_destroy_post`   | after a window is unmapped (won't run for bars)         |
 
-If you would like to hook to some other event, feel free to submit a GitHub issue for it.
+If you would like to hook to some other event, feel free to submit a [GitHub issue](https://github.com/Seeker04/plwm/issues) for it.
 
 ## Scriptability
 
