@@ -1927,7 +1927,8 @@ check_config() :-
 	optcnf_then(animation_granularity(AnimG), (integer(AnimG), 1 =< AnimG))   - "animation_granularity must be a 1<= integer",
 
 	optcnf_then(rules(Rules),
-		forall(member((RName, RClass, RTitle -> RMon, RWs, RMode), Rules), (
+		forall(member(Rule, Rules), (
+			Rule = (RName, RClass, RTitle -> RMon, RWs, RMode),
 			(var(RName)  ; string(RName)  ; (RName  = exact(Str), string(Str))),
 			(var(RClass) ; string(RClass) ; (RClass = exact(Str), string(Str))),
 			(var(RTitle) ; string(RTitle) ; (RTitle = exact(Str), string(Str))),
@@ -1939,7 +1940,8 @@ check_config() :-
 	) - "invalid value in rule",
 
 	optcnf_then(layout_default_overrides(LDefOverrides),
-		forall(member((MonOR, WsOR -> NmasterOR, MfactOR, LayoutOR), LDefOverrides), (
+		forall(member(LDefOverride, LDefOverrides), (
+			LDefOverride = (MonOR, WsOR -> NmasterOR, MfactOR, LayoutOR),
 			(var(MonOR)     ; (integer(MonOR), 0 =< MonOR)),
 			(var(WsOR)      ; atom(WsOR)),
 			(var(NmasterOR) ; (integer(NmasterOR), 0 =< NmasterOR)),
@@ -1956,6 +1958,7 @@ check_config() :-
 		forall(config(startupcmd(Cmd)), string(Cmd)) ; true) - "startupcmd must take a string"
 
 	]), check_errmsg(Check, ErrMsg)),
+
 	writeln("Config: OK")
 .
 
