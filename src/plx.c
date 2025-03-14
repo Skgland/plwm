@@ -68,7 +68,7 @@ static foreign_t x_get_text_property(term_t display, term_t w, term_t text, term
 static foreign_t x_set_text_property(term_t display, term_t w, term_t text_prop, term_t property);
 static foreign_t x_create_simple_window(term_t display, term_t parent, term_t x, term_t y, term_t width,
                                         term_t height, term_t border_width, term_t border, term_t background, term_t w);
-static foreign_t x_get_transient_for_hint(term_t display, term_t w, term_t prop_window_return);
+static foreign_t x_get_transient_for_hint(term_t display, term_t w, term_t prop_window_return, term_t status);
 static foreign_t x_get_window_property(term_t display, term_t w, term_t property, term_t delete, term_t req_type,
                                        term_t prop_return);
 static foreign_t x_get_wm_normal_hints(term_t display, term_t w, term_t hints_return, term_t status);
@@ -125,7 +125,7 @@ static PL_extension predicates[] = {
 	{ "x_get_text_property"       ,  5, x_get_text_property        , 0 },
 	{ "x_set_text_property"       ,  4, x_set_text_property        , 0 },
 	{ "x_create_simple_window"    , 10, x_create_simple_window     , 0 },
-	{ "x_get_transient_for_hint"  ,  3, x_get_transient_for_hint   , 0 },
+	{ "x_get_transient_for_hint"  ,  4, x_get_transient_for_hint   , 0 },
 	{ "x_get_window_property"     ,  6, x_get_window_property      , 0 }, /* 4th, 5th, 8th-11th args are omitted */
 	{ "x_get_wm_normal_hints"     ,  4, x_get_wm_normal_hints      , 0 }, /* supplied_return arg is ignored */
 	{ "x_warp_pointer"            ,  9, x_warp_pointer             , 0 }, /* Unused */
@@ -829,22 +829,22 @@ x_get_text_property(term_t display, term_t w, term_t text, term_t property, term
 	Window win;
 	XTextProperty tprop;
 	Atom prop;
-	Status sts;
+	Status st;
 	static char stext[256];
 
 	PL_TRY(PL_get_pointer_ex(display, (void**)&dp));
 	PL_TRY(PL_get_uint64_ex(w, &win));
 	PL_TRY(PL_get_uint64_ex(property, &prop));
 
-	sts = XGetTextProperty(dp, win, &tprop, prop);
+	st = XGetTextProperty(dp, win, &tprop, prop);
 
-	if (sts != 0) {
+	if (st != 0) {
 		strncpy(stext, (char*)tprop.value, sizeof(stext)-1);
 	}
 	else {
 		stext[0] = '\0';
 	}
-	PL_TRY(PL_unify_integer(status, sts));
+	PL_TRY(PL_unify_integer(status, st));
 	PL_TRY(PL_unify_string_chars(text, stext));
 	PL_succeed;
 }
@@ -892,17 +892,19 @@ x_create_simple_window(term_t display, term_t parent, term_t x, term_t y, term_t
 }
 
 static foreign_t
-x_get_transient_for_hint(term_t display, term_t w, term_t prop_window_return)
+x_get_transient_for_hint(term_t display, term_t w, term_t prop_window_return, term_t status)
 {
 	Display *dp;
 	Window win, wret;
+	Status st;
 
 	PL_TRY(PL_get_pointer_ex(display, (void**)&dp));
 	PL_TRY(PL_get_uint64_ex(w, &win));
 
-	XGetTransientForHint(dp, win, &wret);
+	st = XGetTransientForHint(dp, win, &wret);
 
 	PL_TRY(PL_unify_uint64(prop_window_return, wret));
+	PL_TRY(PL_unify_integer(status, st));
 	PL_succeed;
 }
 

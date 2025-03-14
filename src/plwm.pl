@@ -1111,13 +1111,15 @@ update_wintype(Win) :-
 
 	plx:x_get_window_property(Dp, Win, NetWMWindowType, false, XA_ATOM, TypeProperty),
 	plx:x_get_window_property(Dp, Win, NetWMState,      false, XA_ATOM, StateProperty),
-	plx:x_get_transient_for_hint(Dp, Win, TransientFor),
+	plx:x_get_transient_for_hint(Dp, Win, TransientFor, TSStatus),
+
+	(TSStatus = 0 -> ParentWin = 0 ; ParentWin = TransientFor),
 
 	win_properties(Win, [State|Rest]),
-	(State = managed, (TypeProperty == NetWMWindowTypeDialog ; TransientFor =\= 0) ->
+	(State = managed, (TypeProperty == NetWMWindowTypeDialog ; ParentWin =\= 0) ->
 		win_newproperties(Win, [floating|Rest]) % dialogs and transient wins should be floating on top
 	; true),
-	(win_mon_ws(TransientFor, TMon, TWs) -> % transient wins should be opened where the parent win is
+	(win_mon_ws(ParentWin, TMon, TWs) -> % transient wins should be opened where the parent win is
 		win_tomon_toworkspace_top(Win, TMon, TWs, true)
 	; true),
 
