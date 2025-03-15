@@ -1588,7 +1588,7 @@ handle_event(configurenotify, [_, _, _, _, _, Win, _, _, _, _, _, _, _]) :-
 	; true)
 .
 
-%! send_event(++Win:integer, ++Protocol:atom) is det
+%! send_event(++Win:integer, ++Protocol:atom) is semidet
 %
 %  Sends a ClientMessage XEvent for the given window using the specified
 %  communication protocol (see WM_PROTOCOLS).
