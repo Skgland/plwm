@@ -4,6 +4,8 @@
  *
  */
 
+#include <stdio.h>
+
 #include <X11/X.h>
 #include <X11/Xutil.h>
 #include <X11/Xlib.h>
@@ -189,7 +191,7 @@ x_open_display(term_t display_name, term_t display)
 
 	PL_TRY(PL_get_string(display_name, &dname, &len));
 	if (!(dp = XOpenDisplay(len == 1 ? NULL : dname))) {
-		return (foreign_t)PL_warning("x_open_display/2: XOpenDisplay() failed!");
+		return (foreign_t)PL_warning("x_open_display: XOpenDisplay() failed!");
 	}
 	PL_TRY(PL_unify_pointer(display, dp));
 
@@ -837,8 +839,8 @@ x_change_property(term_t display, term_t w, term_t property, term_t atom, term_t
 	int fmt, md, nelem;
 	term_t head = PL_new_term_ref();
 	term_t list = PL_copy_term_ref(data);
-	uint64_t *alist, i = 0;
-	char *str; size_t len;
+	uint64_t *alist;
+	char *str; size_t len; int i = 0;
 
 	PL_TRY(PL_get_pointer_ex(display, (void**)&dp));
 	PL_TRY(PL_get_uint64_ex(w, &win));
@@ -858,7 +860,8 @@ x_change_property(term_t display, term_t w, term_t property, term_t atom, term_t
 	while (PL_get_list(list, head, list)) {
 		if (!PL_get_uint64_ex(head, &alist[i++])) {
 			free(alist);
-			return (foreign_t)PL_warning("x_change_property/8: PL_get_uint64_ex() on 'data[i]' failed!");
+			fprintf(stderr, "x_change_property: PL_get_uint64_ex() on 'data[%d]' failed!", i);
+			PL_fail;
 		}
 	}
 	XChangeProperty(dp, win, prop, a, fmt, md, (unsigned char *)alist, nelem);
@@ -900,7 +903,8 @@ x_utf8_text_list_to_text_property(term_t display, term_t list, term_t count, ter
 	while (PL_get_list(tlist, head, tlist)) {
 		if (!PL_get_chars(head, &strs[i++], CVT_ALL|REP_UTF8)) {
 			free(strs); free(tprop);
-			return (foreign_t)PL_warning("x_utf8_text_list_to_text_property/5: PL_get_chars() on 'list[i]' failed!");
+			fprintf(stderr, "x_utf8_text_list_to_text_property: PL_get_chars() on 'list[%d]' failed!", i);
+			PL_fail;
 		}
 	}
 	Xutf8TextListToTextProperty(dp, strs, cnt, (XICCEncodingStyle)sty, tprop);
@@ -1209,7 +1213,8 @@ xft_color_alloc_name(term_t display, term_t visual, term_t cmap, term_t name, te
 	PL_TRY(PL_get_string(name, &nam, &len));
 
 	if (!XftColorAllocName(dp, vis, cm, nam, &res)) {
-		return (foreign_t)PL_warning("xft_color_alloc_name/5: XftColorAllocName() failed!");
+		fprintf(stderr, "xft_color_alloc_name: XftColorAllocName() failed!");
+		PL_fail;
 	}
 
 	PL_TRY(PL_unify_uint64(result, res.pixel));
@@ -1231,7 +1236,8 @@ xrr_query_extension(term_t dpy, term_t event_base_return, term_t error_base_retu
 		PL_succeed;
 	}
 	else {
-		return (foreign_t)PL_warning("xrr_query_extension: XRRQueryExtension() failed!");
+		fputs("xrr_query_extension: XRRQueryExtension() failed!", stderr);
+		PL_fail;
 	}
 }
 
@@ -1261,7 +1267,8 @@ xrr_get_screen_resources(term_t dpy, term_t window, term_t screen_resources, ter
 	PL_TRY(PL_get_uint64_ex(window, &win));
 
 	if ((scrres = XRRGetScreenResources(dp, win)) == NULL) {
-		return (foreign_t)PL_warning("xrr_get_screen_resources: XRRGetScreenResources() returned NULL!");
+		fputs("xrr_get_screen_resources: XRRGetScreenResources() returned NULL!", stderr);
+		PL_fail;
 	}
 
 	PL_TRY(PL_unify_pointer(screen_resources, scrres), XRRFreeScreenResources(scrres));
@@ -1305,12 +1312,14 @@ xrr_get_output_info(term_t dpy, term_t resources, term_t output_index, term_t ou
 	PL_TRY(PL_get_integer_ex(output_index, &oidx));
 
 	if (oidx < 0 || scrres->noutput <= oidx) {
-		return (foreign_t)PL_warning("xrr_get_output_info: output_index: %d is out of bounds: 0..%d!",
-		                             oidx, scrres->noutput);
+		fprintf(stderr, "xrr_get_output_info: output_index: %d is out of bounds: 0..%d!",
+		        oidx, scrres->noutput);
+		PL_fail;
 	}
 
 	if ((oinfo = XRRGetOutputInfo(dp, scrres, scrres->outputs[oidx])) == NULL) {
-		return (foreign_t)PL_warning("xrr_get_output_info: XRRGetOutputInfo() returned NULL!");
+		fputs("xrr_get_output_info: XRRGetOutputInfo() returned NULL!", stderr);
+		PL_fail;
 	}
 
 	term_t name = PL_new_term_ref();
@@ -1345,7 +1354,8 @@ xrr_get_crtc_info(term_t dpy, term_t resources, term_t crtc, term_t crtc_info)
 	PL_TRY(PL_get_uint64_ex(crtc, &rrcrtc));
 	
 	if ((crtcinfo = XRRGetCrtcInfo(dp, scrres, rrcrtc)) == NULL) {
-		return (foreign_t)PL_warning("xrr_get_crtc_info: XRRGetCrtcInfo() returned NULL!");
+		fputs("xrr_get_crtc_info: XRRGetCrtcInfo() returned NULL!", stderr);
+		PL_fail;
 	}
 
 	term_t x = PL_new_term_ref();
@@ -1459,7 +1469,7 @@ xerror(Display __attribute__((unused)) *dpy, const XErrorEvent *ee)
 	|| (ee->request_code == X_GrabKey           && ee->error_code == BadAccess)
 	|| (ee->request_code == X_CopyArea          && ee->error_code == BadDrawable))
 		return 0;
-	fprintf(stderr, "plx: fatal error: request code=%d, error code=%d\n",
+	fprintf(stderr, "xerror: fatal X error - request code=%d, error code=%d\n",
 		ee->request_code, ee->error_code);
 	return -1;
 }

@@ -1903,7 +1903,7 @@ init_state() :-
 	empty_assoc(EmptyAFocused), nb_setval(focused, EmptyAFocused),
 	empty_assoc(EmptyAWins),    nb_setval(windows, EmptyAWins),
 
-	(query_outputs(OutputInfos) ->
+	(query_outputs(OutputInfos), OutputInfos \= [] ->
 		init_monitors(OutputInfos),
 		OutputInfos = [FstMon-_|_]
 	;
@@ -1920,7 +1920,7 @@ init_state() :-
 	nb_setval(hide_empty_workspaces, State)
 .
 
-%! query_outputs(-OutputInfos:[string-[int,int,int,int]]) is det
+%! query_outputs(-OutputInfos:[string-[int,int,int,int]]) is semidet
 %
 %  Returns the list of active outputs and their geometries using the XRandR extension.
 %  Fails if the XRandR extension is not available (XRRQueryExtension() returns error).
@@ -1942,7 +1942,7 @@ query_outputs(OutputInfos) :-
 			xrr_free_screen_resources(ScreenResources)
 		; true)
 	;
-		writeln("XRandR extension not available"),
+		writeln(user_error, "XRandR extension not available"),
 		fail
 	)
 .
