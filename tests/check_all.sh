@@ -59,6 +59,30 @@ diff -q <(sed 's/module(config/module(runtime_config/' src/config.pl) $XDG_CONFI
 [[ "$(plwm -C)"      == $'xdg config loaded\nConfig: OK' ]] && echo "plwm -C OK"      || false
 [[ "$(plwm --check)" == $'xdg config loaded\nConfig: OK' ]] && echo "plwm --check OK" || false
 
+cp $XDG_CONFIG_HOME/plwm/config.pl /tmp/
+
+[[ "$(plwm -c       /tmp/config.pl -C)" == $'-c user config loaded\nConfig: OK' ]] && echo "plwm -c OK"       || false
+[[ "$(plwm --config=/tmp/config.pl -C)" == $'-c user config loaded\nConfig: OK' ]] && echo "plwm --config OK" || false
+
+echo
+echo "----------------------------------------------------------------------"
+echo "Checking -h and --help"
+echo "----------------------------------------------------------------------"
+
+[ "$(plwm -h     |& head -1)" = "Usage: plwm [OPTION]..." ] && echo "plwm -h OK"     || false
+[ "$(plwm --help |& head -1)" = "Usage: plwm [OPTION]..." ] && echo "plwm --help OK" || false
+
+echo
+echo "----------------------------------------------------------------------"
+echo "Checking -l and --log"
+echo "----------------------------------------------------------------------"
+
+plwm -l /tmp/testlog1 -C
+plwm -l /tmp/testlog2 -C
+
+[[ "$(cat /tmp/testlog1)" == $'xdg config loaded\nConfig: OK' ]] && echo "plwm -l OK"    || false
+[[ "$(cat /tmp/testlog2)" == $'xdg config loaded\nConfig: OK' ]] && echo "plwm --log OK" || false
+
 echo
 echo "----------------------------------------------------------------------"
 echo "Static code analysis"
