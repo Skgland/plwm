@@ -44,5 +44,5 @@ RUN chown -R testuser:testuser /home/testuser
 # Switch to the testuser
 USER testuser
 
-# Build and run all checks
-CMD ["tests/check_all.sh"]
+# Run all checks
+CMD ["bash", "-c", "time tests/check_all.sh"]
