@@ -1,4 +1,4 @@
-% MIT License, Copyright (c) 2023 Barnabás Zahorán, see LICENSE
+% MIT License, Copyright (c) 2023-2025 Barnabás Zahorán, see LICENSE
 %
 % Note: there is extensive commenting in this file, as well as arbitrary examples
 % for easier understanding. Feel free to remove them once you're familiar with the settings

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# MIT License, Copyright (c) 2023 Barnabás Zahorán, see LICENSE
+# MIT License, Copyright (c) 2023-2025 Barnabás Zahorán, see LICENSE
 
 [[ "$1" == "-v" || "$1" == "--verbose" ]] && verbose=1
 

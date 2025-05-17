@@ -1,4 +1,4 @@
-/* MIT License, Copyright (c) 2023 Barnabás Zahorán, see LICENSE
+/* MIT License, Copyright (c) 2023-2025 Barnabás Zahorán, see LICENSE
  *
  * plxlib - X11 library bindings to SWI-Prolog for plwm
  *
