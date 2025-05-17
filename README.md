@@ -509,13 +509,17 @@ done > /tmp/plwm_fifo
 
 # Screenshots
 
-| ![Screenshot 1](img/scr1.png) |
+| ![Screenshot 1](img/screenshot1.png) |
 |:--:|
 | *default appearance* |
 
-| ![Screenshot 2](img/scr2.png) |
+| ![Screenshot 2](img/screenshot2.png) |
 |:--:|
 | *lmaster / nmaster=1 / mfact=2/3 / 1px borders / 18px inner & outer gaps / goto window menu / polybar / picom / gruvbox colors* |
+
+| ![Screenshot 3](img/screenshot3.png) |
+|:--:|
+| *bmaster / nmaster=1 / mfact=2/3 / 3px focused border / 26px inner & outer gaps / polybar / picom /w rounded corners & shadows* |
 
 # Project status
 
