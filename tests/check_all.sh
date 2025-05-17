@@ -13,6 +13,15 @@ echo "Checking integrity of plwm v$version [$commit]"
 
 echo
 echo "----------------------------------------------------------------------"
+echo "Checking license"
+echo "----------------------------------------------------------------------"
+
+grep -q "Copyright (c)" LICENSE && echo "LICENSE OK" || false
+
+grep -q "$(date +%Y)" LICENSE && echo "LICENSE year OK" || echo "WARNING: update LICENSE year!"
+
+echo
+echo "----------------------------------------------------------------------"
 echo "Building plwm"
 echo "----------------------------------------------------------------------"
 
