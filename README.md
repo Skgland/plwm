@@ -31,24 +31,23 @@
 
 # About
 
-plwm is a highly customizable X11 dynamic tiling window manager written in [Prolog](https://en.wikipedia.org/wiki/Prolog), inspired by dwm.
+plwm is a highly customizable X11 dynamic tiling window manager written in [Prolog](https://en.wikipedia.org/wiki/Prolog).
 
-Main goals of the project are: good code & documentation quality; powerful yet easy customization; to cover most common needs of tiling WM users; and to stay small, easy to use and hack on.
+Main goals of the project are: high code & documentation quality; powerful yet easy customization; covering most common needs of tiling WM users; and to stay small, easy to use and hack on.
 
 Powered by [SWI-Prolog](https://www.swi-prolog.org/)
 
 # Feature highlights
 
-* Source based like dwm: easy to hack on (small LOC), great way to introduce yourself to the logic programming paradigm and Prolog
+* Easy to hack on, great way to introduce yourself to the logic programming paradigm and Prolog
 * Easy to configure: Prolog is declarative, so even though the config is source code, it feels like a dedicated format
-* Config is compiled in by default, but there is an option to also read it at startup for those who don't wish to recompile after each change
 * Tiling is dynamic, with various layouts included by default: monocle, vertical/horizontal stacks, grid, left/right/top/bottom/centered master-stack, nrows(N), ncols(N)
 * Floating windows are also supported (move/resize with mouse)
-* Support for any number of external bars, e.g., polybar, lemonbar, xmobar
-* Nice level of EWMH compilance: external bars work, dialogs, fullscreen and other size hints are recognized, etc. - **partially still work-in-progress**
+* Support for external bars, e.g. polybar, lemonbar
+* Nice level of EWMH compilance - **partially still work-in-progress**
+* Performance: plwm is fast and light as a feather when it comes to resource usage (10-15 MB memory)
 * Dynamic workspace operations: create, rename, reindex or delete workspaces on the fly
-* Misc features: multi-monitor support, adjustable tiling parameters, inner/outer gaps, menu integration with dmenu/rofi, rules, hooks, animations, command fifo and more
-* Performance: plwm is fast and light as a feather when it comes to resource usage
+* Other features: multi-monitor support, inner/outer gaps, menu integrations with dmenu/rofi, rules, hooks, animations, command fifo and more
 * You can say: "My window manager is a semantic consequence of a set of axioms and implications which my computer is deducing/proving from an infinitely branching proof-tree"
 
 # Installation
@@ -106,6 +105,8 @@ Type=Application
 
 ## Basics
 
+Command-line options are listed by running `plwm -h`. The manual plwm(1) also contains them as well as the default keybindings.
+
 If you have already used dynamic tiling WMs like dwm, then nothing should be too surprising in this section.
 
 All windows are _managed_ by default. This means that whenever a window spawns, it will be added to a list. We call this list the _stack_. Also, the placement and the size of the windows are automatically calculated and set. This is determined by the currently active _layout_ (stack, horizontal stack, grid, etc.).
@@ -115,7 +116,7 @@ Some layouts are called "master-stack" layouts (the ones which have "master" in 
 For example, if you start plwm with the default config, you have: `layout = lmaster`, `nmaster = 1`, `mfact = 2/3`, which means that the stack's top window will always be on the left side and occupy 2/3 of the screen width, while the other windows will be in a secondary stack on the right having 1/3 of the screen width.
 
 Some base promises of this approach:
-* Declarative window management: you only _tell_ your system _what_ window arrangement you want and don't do the movement/resizing (don't need to care about the _how_ - lower cognitive load?)
+* Declarative window management: you only _tell_ your system _what_ window arrangement you want and don't do the movement/resizing (don't need to care about the _how_)
 * When new windows are spawned or old ones close, the layout will adapt automatically
 * Playing with the `layout`, `nmaster`, `mfact` trio, one can cook up mostly any kind of arrangement a situation may need, just with a few keystrokes.
 * 100% of the screen space is utilized at all times, 99% if you use gaps :)
@@ -285,8 +286,8 @@ The `switch_monitor/1` and `move_focused_to_monitor/1` predicates can take many 
 * `prev`/`next` will go to the previous/next monitor (these will wrap) - only these have keymaps by default
 * `prev_nonempty`/`next_nonempty` will go to the previous/next _non-empty_ monitor (a monitor is considered empty if its currently displayed workspace is empty). If you use a lot of monitors, say six, it could be convenient to cycle through only the relevant, i.e., non-empty ones (these will wrap)
 * `left`/`right`/`up`/`down` will go to the specified direction relative to the active monitor calculated from x/y screen coordinates (these won't wrap)
-* An output name, shown by `xrandr(1)`, e.g. "eDP-1" or "HDMI-1". If you have a consistent [xrandr(1)](https://man.archlinux.org/man/xrandr.1) setup, then you can refer them to move to arbitrary monitors.
-* Index of managed monitor.
+* An output name, shown by `xrandr(1)`, e.g. "eDP-1" or "HDMI-1". If you have a consistent [xrandr(1)](https://man.archlinux.org/man/xrandr.1) setup, then you can refer them to move to arbitrary monitors
+* Index of managed monitor
 
 You can also switch monitors by moving with the mouse between them. Likewise, windows can be dragged and dropped between monitors using the mouse.
 
@@ -357,12 +358,12 @@ shellcmd("alacritty --class cmus -e cmus")
 then you can match it with with a rule like:
 
 ```prolog
-("cmus", "cmus", _ -> 0, '9', managed)
+("cmus", "cmus", _ -> "eDP-1", '9', managed)
 ```
 
 ## Menus
 
-The `menu` module is fully optional, but there are keybindings for it too by default:
+The `menu` module also has default keybindings:
 
 **Navigation/window placement**
 
@@ -421,7 +422,7 @@ hooks([
     switch_monitor("HDMI-1")
   ),
 
-  switch_workspace_post -> (
+  switch_workspace_post -> (   % display different wallpaper on each workspace
     active_mon_ws(_, Ws),
     (Ws = '1' -> shellcmd("feh --bg-fill ~/pic/bg/lake.jpg")
     ;Ws = '2' -> shellcmd("feh --bg-fill ~/pic/bg/forest.jpg")
@@ -446,7 +447,7 @@ Supported events:
 | `window_destroy_pre`    | before a window is unmapped (won't run for bars)        |
 | `window_destroy_post`   | after a window is unmapped (won't run for bars)         |
 
-If you would like to hook to some other event, feel free to submit a [GitHub issue](https://github.com/Seeker04/plwm/issues) for it.
+If you would like to hook to some other event, feel free to submit a [GitHub issue](https://github.com/Seeker04/plwm/issues/new) for it.
 
 ## Scriptability
 
@@ -527,9 +528,9 @@ done > /tmp/plwm_fifo
 
 # Project status
 
-**!!! Disclaimer:** plwm is still in an experimental state. First stable release will be v1.0. While crashes or other major bugs don't really occur, it's good to keep this in mind **!!!**
+**!!! Disclaimer:** plwm is still in an experimental state. First stable release will be v1.0.0. While crashes or other major bugs don't really occur, it's good to keep this in mind **!!!**
 
-Also, this means that breaking changes (e.g. renaming of settings) are to be expected before reaching v1.0. We plan on switching to [semantic versioning](https://semver.org/) from that point onwards.
+Also, this means that breaking changes (e.g. renaming of settings) are to be expected before reaching v1.0.0. We plan on switching to [semantic versioning](https://semver.org/) from that point onwards.
 
 For known problems, see [the Issues with bug labels](https://github.com/Seeker04/plwm/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
 
@@ -543,25 +544,17 @@ Any code contribution is also welcome. Especially if it solves some known issue.
 
 # FAQ
 
-**Why yet another dwm clone?**
+**Why workplaces instead of tags?**
 
-Why not? It was a good challenge, a nice learning experience and a lot of fun to implement a WM using logic programming and Prolog. It's also kind of a proof of concept and advertisement of Prolog.* It was suprisingly easy and fast to develop.
-
-Also, if you read through this page all the way here, you surely see it's less a of a"direct clone" and more of a "spiritual successor".
-
-\*This project is probably not the best example for all the strengths of logic programming. A lot of it is written in a more "imperative style" using global variables (kind of a domain requirement for window managers). If you want to see usecases that align better with logic programming, start [here](https://www.youtube.com/watch?v=8XUutFBbUrg).
-
-**But isn't SWI-Prolog non-ISO compliant?**
-
-Interoperability between different Prolog implementations was never really on the table. Their C FFIs are also different, so [plx.c](plx.c) would also need to be rewritten for each kind of Prolog. SWI-Prolog is arguably one of the most popular free and community-driven Prolog implementations, is easily accessible, has good documentation, some LSP support and a lot of libraries. Though, to be honest, plwm's code mostly sticks to fundamentals, so if someone really wanted to, it shouldn't be too hard to port this to another Prolog system...
+Tags is a cool generalization of workspaces, but I never actually utilized them in dwm for more than simple workspace usage. That's why I went with the simpler approach.
 
 **What about performance? Isn't Prolog slow?**
 
-Compared to what? C? Yes. Does it matter? No. I've been using dwm for 6 years, so I have a good idea of its speed, and when I switch to plwm, it feels **exactly** as snappy... on my 6 years old laptop. So I don't think, anyone will see a notable difference.
+Compared to what? C? Yes. Does it matter? No. I've been using dwm for 6 years, so I have a good idea of its speed, and when I switch to plwm, it feels **exactly** as snappy... on my 10 years old laptop. So I don't think, anyone will see a notable difference.
 
-**Why workplaces instead of tags?**
+**Isn't SWI-Prolog non-ISO compliant?**
 
-Tags is a cool generalization of workspaces, but I never actually utilized them for more than simple workspace usage. That's why I went with the simpler approach.
+Interoperability between different Prolog implementations was never really on the table. Their C FFIs are also different, so [plx.c](plx.c) would also need to be rewritten for each kind of Prolog. SWI-Prolog is arguably one of the most popular free and community-driven Prolog implementations, is easily accessible, has good documentation, some LSP support and a lot of libraries. Though, to be honest, plwm's code mostly sticks to fundamentals, so if someone really wanted to, it shouldn't be too hard to port this to another Prolog system...
 
 **Why not Wayland?**
 
@@ -577,11 +570,7 @@ to your `.xinitrc` should solve this problem.
 
 **plwm doesn't start! What's going on?**
 
-Most likely your configuration is faulty. Run plwm with the `--check` flag, i.e.:
-
-`$ plwm -C`
-
-then you should see the problem.
+Most likely your configuration is faulty. Run `plwm --check`, then you should see the problem.
 
 If you don't see a config error, then please report it as an issue. Preferably by attaching any message plwm dumps to stderr or to its logfile with `-l`.
 
