@@ -24,7 +24,7 @@
 :- dynamic hook/2.
 :- dynamic jobs/1 as shared.
 
-version(0.3).
+version(0.4).
 
 %*********************************  Globals  **********************************
 %

@@ -1,3 +1,27 @@
+# [v0.4](https://github.com/Seeker04/plwm/releases/tag/v0.4) (2025-05-21)
+
+## Added
+- Hooks implementation ([#56](https://github.com/Seeker04/plwm/issues/56))
+- WM_TAKE_FOCUS protocol implementation ([#77](https://github.com/Seeker04/plwm/issues/77))
+- Mirrored monitor handling ([#8](https://github.com/Seeker04/plwm/issues/8))
+- Auto tests in CI with Docker and GitHub Actions ([#67](https://github.com/Seeker04/plwm/issues/67), [#86](https://github.com/Seeker04/plwm/issues/86))
+- More unit tests, coverage at 29% ([#62](https://github.com/Seeker04/plwm/issues/62), [#63](https://github.com/Seeker04/plwm/issues/63))
+- Documentation updates including a video demo of layouts and animations
+
+## Removed
+- `startupcmd` setting superseded by `hooks` on `start`
+
+## Changed
+- Replaced Xinerama with XRandR ([#50](https://github.com/Seeker04/plwm/issues/50))
+
+## Fixed
+- Ill-structured rules and layout overrides in config were silently ignored
+- Fixed handling of hidden windows (e.g. Steam, Gimp) with `UnmapNotify` ([#6](https://github.com/Seeker04/plwm/issues/6), [#53](https://github.com/Seeker04/plwm/issues/53))
+- Moving window to other monitor not always updated layout ([#79](https://github.com/Seeker04/plwm/issues/79))
+- Some non-fatal issues used `PL_warning` which killed plwm, added simple warning output instead
+- Position fix for above/below monitor configs ([#84](https://github.com/Seeker04/plwm/issues/84))
+- Mouse cursor was not visible until first window opening ([#89](https://github.com/Seeker04/plwm/issues/89))
+
 # [v0.3](https://github.com/Seeker04/plwm/releases/tag/v0.3) (2025-01-23)
 
 ## Added
