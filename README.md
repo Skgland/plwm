@@ -542,6 +542,13 @@ If you have a feature request, please do the same.
 
 Any code contribution is also welcome. Especially if it solves some known issue. For brand new ideas, I recommend creating an issue first, so we can discuss it.
 
+**Note:** a base criteria for merging is successful validation done by [tests/check_all.sh](tests/check_all.sh). This includes unit tests and some other checks and is done automatically in the CI. If you wish to validate locally, you can do so with the Docker image:
+
+```bash
+DOCKER_BUILDKIT=1 sudo docker build -t plwm:latest .
+sudo docker run plwm:latest
+```
+
 # FAQ
 
 **Why workplaces instead of tags?**
