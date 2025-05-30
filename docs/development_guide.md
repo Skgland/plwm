@@ -115,9 +115,9 @@ If you wish to peek into the X11 bindings in plx.c, then you can add `-g` to `CF
 
 All tests and validation related tools go under [tests/](../tests).
 
-* [check_all.sh](../check_all.sh) verifies the build & install integrity, runs static code analyzers, unit tests, etc.
-* [run_unit_tests.sh](../run_unit_tests.sh) executes all unit tests. Must be run from the project root or with `make test`.
-* [get_coverage.sh](../get_coverage.sh) calculates predicate coverage. If a predicate has at least one test, it's considered covered.
+* [check_all.sh](../tests/check_all.sh) verifies the build & install integrity, runs static code analyzers, unit tests, etc.
+* [run_unit_tests.sh](../tests/run_unit_tests.sh) executes all unit tests. Must be run from the project root or with `make test`.
+* [get_coverage.sh](../tests/get_coverage.sh) calculates predicate coverage. If a predicate has at least one test, it's considered covered.
 
 Unit tests reside in [tests/unit_tests/](../tests/unit_tests). They are grouped by modules and must have `.plt` extension, e.g. `utils.plt` tests `utils.pl`.
 
