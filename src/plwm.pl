@@ -460,7 +460,7 @@ focus(Win) :-
 %  @arg OnlyVisual whether to unfocus only visually
 unfocus_onlyvisual(OnlyVisual) :- active_mon_ws(ActMon, ActWs), unfocus_at_onlyvisual(ActMon-ActWs, OnlyVisual).
 
-%! unfocus_onlyvisual(++At:integer-atom, ++OnlyVisual:bool) is det
+%! unfocus_at_onlyvisual(++At:integer-atom, ++OnlyVisual:bool) is det
 %
 %  Unfocuses the active window on the target monitor-workspace.
 %  This entails removing the focused status, adjusting the ActiveWindow netatom

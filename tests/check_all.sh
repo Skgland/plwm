@@ -116,6 +116,23 @@ make clang-tidy
 
 echo
 echo "----------------------------------------------------------------------"
+echo "Checking documentation comments"
+echo "----------------------------------------------------------------------"
+
+preds=$(egrep -h "^[a-z_]+[^_]\(.*\)(:-|.)" src/*.pl | cut -d'(' -f1 | sort -u | grep -vx "version")
+
+# note: we ignore version/0 and local helpers suffixed with an underscore e.g. valid_set_/2
+
+undocumented=""
+for pred in $preds; do
+	grep -q "^%! $pred" src/*.pl || undocumented="$undocumented\n$pred"
+done
+
+[ -z "$undocumented" ] && echo "documentation comments OK" \
+|| (echo -e "Predicates with no documentation comment:$undocumented"; false)
+
+echo
+echo "----------------------------------------------------------------------"
 echo "Unit tests"
 echo "----------------------------------------------------------------------"
 
