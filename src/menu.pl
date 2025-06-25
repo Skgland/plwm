@@ -367,10 +367,11 @@ cmd_desc(menu:rename_workspace , "Rename selected workspace").
 cmd_desc(menu:reindex_workspace, "Reindex selected workspace").
 cmd_desc(menu:delete_workspaces, "Delete selected workspaces").
 cmd_desc(menu:list_keymaps     , "List all defined keymaps").
+cmd_desc(shellcmd              , "Run a shell command").
+cmd_desc(reload_config         , "Reload configuration file").
+cmd_desc(dump_settings         , "Dump current settings to a file").
+cmd_desc(dump_changed_settings , "Dump settings that differ from the defaults to a file").
 cmd_desc(shellcmd(Cmd), D) :- format(string(D), "Run `~s`", [Cmd]).
-cmd_desc(shellcmd, "Run a shell command").
-cmd_desc(reload_config, "Reload configuration file").
-cmd_desc(dump_settings, "Dump current settings to a file").
 cmd_desc(set(Setting), D) :- string_concat("Change setting ", Setting, D).
 cmd_desc(add(Setting), D) :- string_concat("Add to setting ", Setting, D).
 
@@ -437,10 +438,19 @@ change_setting_prompt(SettingName, Append) :-
 
 %! dump_settings_prompt() is det
 %
-%  Prompts the user for a path to dump settings to. See dump_settings/1 for details.
+%  Prompts the user for a path to dump settings to. See dump_settings/2 for details.
 dump_settings_prompt() :-
 	(read_from_prompt("Dump settings to", Input) ->
-		dump_settings(Input)
+		dump_settings(Input, false)
+	; true)
+.
+
+%! dump_changed_settings_prompt() is det
+%
+%  Prompts the user for a path to dump changed settings to. See dump_settings/2 for details.
+dump_changed_settings_prompt() :-
+	(read_from_prompt("Dump changed settings to", Input) ->
+		dump_settings(Input, true)
 	; true)
 .
 
@@ -454,12 +464,13 @@ dump_settings_prompt() :-
 %  @arg Selection list of selections - unused, filled be spawn_menu/3
 run_cmd(MenuEntries, [Selection]) :-
 	(member(Cmd-Selection, MenuEntries) ->
-		(Cmd = set(Setting)   -> change_setting_prompt(Setting, false)
-		;Cmd = add(Setting)   -> change_setting_prompt(Setting, true)
-		;Cmd = change_nmaster -> change_nmaster_prompt
-		;Cmd = change_mfact   -> change_mfact_prompt
-		;Cmd = shellcmd       -> shellcmd_prompt
-		;Cmd = dump_settings  -> dump_settings_prompt
+		(Cmd = set(Setting)          -> change_setting_prompt(Setting, false)
+		;Cmd = add(Setting)          -> change_setting_prompt(Setting, true)
+		;Cmd = change_nmaster        -> change_nmaster_prompt
+		;Cmd = change_mfact          -> change_mfact_prompt
+		;Cmd = shellcmd              -> shellcmd_prompt
+		;Cmd = dump_settings         -> dump_settings_prompt
+		;Cmd = dump_changed_settings -> dump_changed_settings_prompt
 		;call(Cmd))
 	; true)
 .
@@ -591,6 +602,7 @@ list_cmds() :-
 		shellcmd,
 		reload_config,
 		dump_settings,
+		dump_changed_settings,
 		set(default_nmaster),
 		set(default_mfact),
 		set(default_layout),

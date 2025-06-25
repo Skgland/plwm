@@ -2215,18 +2215,21 @@ reload_config() :-
 	nb_delete(settings_snapshot)
 .
 
-%! dump_settings(++FilePath:string) is det
+%! dump_settings(++FilePath:string, ++OnlyChanged:bool) is det
 %
-%  Dumps all current settings to a file.
+%  Dumps current settings to a file.
 %
 %  @arg FilePath path of file to create
-dump_settings(FilePath) :-
+%  @arg OnlyChanged whether to only dump settings that differ from their default values
+dump_settings(FilePath, OnlyChanged) :-
 	open(FilePath, write, DumpFile),
 	forall(setting:setting(Setting), (
 		call(Setting, Value),
-		compound_name_arguments(Config, Setting, [Value]),
-		write_term(DumpFile, Config, [quoted(true), spacing(next_argument)]),
-		writeln(DumpFile, ".")
+		((OnlyChanged = false ; \+ setting:default_set(Setting, Value)) ->
+			compound_name_arguments(Config, Setting, [Value]),
+			write_term(DumpFile, Config, [quoted(true), spacing(next_argument)]),
+			writeln(DumpFile, ".")
+		; true)
 	)),
 	close(DumpFile)
 .

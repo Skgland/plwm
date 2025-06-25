@@ -250,7 +250,7 @@ hooks([
 
 * `set/2` and `add/2` can be used to overwrite or append to existing settings, respectively. You can invoke them via a keymap, the [command fifo](#scriptability) or the [command menu](#menus).
 * The whole configuration file can be reloaded by calling `reload_config/0`.
-* You can use `dump_settings/1` to dump all current settings to a file.
+* You can use `dump_settings(Path, false)` to dump all current settings and `dump_settings(Path, true)` to dump only those that differ from the defaults to a file. Both are available in the command menu.
 
 ## External bars
 

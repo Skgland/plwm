@@ -657,18 +657,32 @@ test("change_setting_prompt - (add)", [
 	menu:change_setting_prompt(hooks, true)
 .
 
-test("change_setting_prompt", [
+test("dump_settings_prompt", [
 	setup((
 		% we omit from the output the prompt read_from_prompt/0 appends
 		assertz(menu:menucmd(["sh", "-c", "echo $0", "somefile"])),
-		assertz(menu:dump_settings(FilePath) :- string(FilePath))
+		assertz(menu:dump_settings(FilePath, false) :- string(FilePath))
 	)),
 	cleanup((
 		retract(menu:menucmd(_)),
-		retract(menu:dump_settings(_))
+		retract(menu:dump_settings(_, _))
 	))
 ]) :-
 	assertion(menu:dump_settings_prompt)
+.
+
+test("dump_changed_settings_prompt", [
+	setup((
+		% we omit from the output the prompt read_from_prompt/0 appends
+		assertz(menu:menucmd(["sh", "-c", "echo $0", "somefile"])),
+		assertz(menu:dump_settings(FilePath, true) :- string(FilePath))
+	)),
+	cleanup((
+		retract(menu:menucmd(_)),
+		retract(menu:dump_settings(_, _))
+	))
+]) :-
+	assertion(menu:dump_changed_settings_prompt)
 .
 
 test("run_cmd +") :-
