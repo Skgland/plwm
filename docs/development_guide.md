@@ -129,6 +129,8 @@ They are written using SWI-Prolog's [PlUnit](https://www.swi-prolog.org/pldoc/do
 swipl -g run_tests -t halt tests/unit_tests/utils.plt
 ```
 
+**Note:** predicates called from other modules must be mocked: either define them at the top of the test file (all tests will access it), or dynamically assertz and retract in the `setup` and `cleanup` clauses of tests as needed.
+
 **Important:** Every new revision of plwm must give an "All checks PASSED" result from check_all.sh to be accepted. To be precise, it must succeed in our `ubuntu:latest` [Docker image](../Dockerfile).
 
 You can build and run it with these commands:
@@ -164,6 +166,8 @@ Two criteria must be met before a PR can be merged:
 We use [rebasing](https://docs.github.com/en/get-started/using-git/about-git-rebase) as merge method to keep a clean linear history.
 
 If it solves some issue(s), e.g. no. 1 and 2, the description must have `Closes #1. Closes #2.`
+
+We don't immediately delete branches when merging PRs. Old branches are removed when we create a new release.
 
 New contributors will be asked if they wish to be included in [AUTHORS](../AUTHORS).
 
