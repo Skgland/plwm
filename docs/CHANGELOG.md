@@ -1,3 +1,26 @@
+# [v0.5](https://github.com/Seeker04/plwm/releases/tag/v0.5) (2025-06-29)
+
+## Added
+- Development Guide for contributors ([#31](https://github.com/Seeker04/plwm/issues/31))
+- `banner.png` (`logo.png` looked bad on the social preview)
+- Configuration overhaul ([#30](https://github.com/Seeker04/plwm/issues/30))
+  - All settings have defaults now
+  - Settings can be changed dynamically with `set/2` and `add/2`
+  - `reload_config/0` re-reads config file
+  - `dump_settings/2` dumps current setting values to a file, all or only those that differ from the defaults
+- Check for documentation comments in `check_all.sh`
+- Build and release overhaul ([#105](https://github.com/Seeker04/plwm/issues/105))
+  - Releases now also ship `install.sh`, `uninstall.sh`, docs and the default config, not just the binaries
+  - `generate_release.sh` for easy release generation
+
+## Changed
+- Configuration overhaul ([#30](https://github.com/Seeker04/plwm/issues/30))
+  - It is loaded at runtime, i.e. `config.pl` is no longer compiled in
+  - Default config is installed to `/etc/plwm/config.pl` (uninstall won't remove, reinstall backs it up if changed)
+  - **Existing configs must remove the `:- module` declaration line**
+  - **`bar_class/2` had been changed to a deterministic `bar_classes/1` taking a list of pairs**
+- Minor code and docs refactors (e.g. all binaries and objects go to `bin/` now, fixing broken links, etc.)
+
 # [v0.4](https://github.com/Seeker04/plwm/releases/tag/v0.4) (2025-05-21)
 
 ## Added

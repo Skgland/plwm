@@ -4,7 +4,7 @@
 %
 % See docs/README.md to get started
 
-version(0.4).
+version(0.5).
 
 :- use_module(library(assoc)).
 
