@@ -2256,7 +2256,7 @@ opts_spec([
 parse_opt(help(true)) :-
 	writeln("Usage: plwm [OPTION]..."),
 	opts_spec(OptsSpec), opt_help(OptsSpec, Help), writeln(Help), quit.
-parse_opt(version(true)) :- version(V), write("plwm version "), writeln(V), quit.
+parse_opt(version(true)) :- version(V), write("plwm version v"), writeln(V), quit.
 parse_opt(config(Cnf)) :- (Cnf \= unset -> assertz(config_flag(Cnf)) ; true).
 parse_opt(log(Log)) :-
 	(Log \= stdout ->

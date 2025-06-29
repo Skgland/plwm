@@ -4,14 +4,14 @@
 
 set -e # stop immediately if any command fails
 
-version=$(sed -n 's/^version(\([0-9.]\+\))\.$/\1/p' src/plwm.pl)
+version="v$(sed -n 's/^version(\([0-9.]\+\))\.$/\1/p' src/plwm.pl)"
 commit=$(git rev-parse --short HEAD)
 arch="$(uname | tr A-Z a-z)-$(uname -m | tr A-Z a-z)"
 
-trap "echo -e \"\nChecks FAILED for plwm v$version [$commit] on $arch!\"" ERR
+trap "echo -e \"\nChecks FAILED for plwm $version [$commit] on $arch!\"" ERR
 
 echo
-echo "Checking integrity of plwm v$version [$commit] on $arch"
+echo "Checking integrity of plwm $version [$commit] on $arch"
 
 echo
 echo "----------------------------------------------------------------------"
@@ -274,5 +274,5 @@ echo "----------------------------------------------------------------------"
 verify_uninstall
 
 echo
-echo "All checks PASSED for plwm v$version [$commit] on $arch"
+echo "All checks PASSED for plwm $version [$commit] on $arch"
 
