@@ -85,6 +85,7 @@ Our usage:
 Rules:
 
 * All predicates _must_ have [SWI-Prolog style structured comments](https://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/pldoc.html%27)) that shows determinism, arity, and type & mode indicators for arguments.
+  * We take some liberty here: if a predicate can be run in several modes, we usually don't list them all, only the most intended and used invocation
 * Hard to understand code _should_ be commented to show its intent.
 * All new predicates _should_ have unit tests. Both positive (success) and negative (failure) cases if applicable.
 * Global variables and dynamic predicates _must_ have documentation comments explaining their purpose.
