@@ -1999,7 +1999,7 @@ init_state() :-
 query_outputs(OutputInfos) :-
 	(xrandr_available ->
 		display(Dp), rootwin(Rootwin),
-		(xrr_get_screen_resources(Dp, Rootwin, ScreenResources, Outputs) ->
+		(plx:xrr_get_screen_resources(Dp, Rootwin, ScreenResources, Outputs) ->
 			RR_Connected is 0,
 			findall(Output-[X, Y, W, H], (
 				nth0(Idx, Outputs, _),
@@ -2009,7 +2009,7 @@ query_outputs(OutputInfos) :-
 				),
 				OutputInfos
 			),
-			xrr_free_screen_resources(ScreenResources)
+			plx:xrr_free_screen_resources(ScreenResources)
 		; true)
 	;
 		writeln(user_error, "XRandR extension not available"),
