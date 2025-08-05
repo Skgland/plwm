@@ -499,7 +499,7 @@ list_keymaps :-
 	findall(Action-Line, (   % map key (Action) to lines for later lookup
 		nth1(Idx, Keymaps, (_ -> Action)),
 		nth1(Idx, KBStrs, KBStr),
-		once(cmd_desc(Action, Desc) ; Desc = ""),
+		once((cmd_desc(Action, Desc) ; Desc = "")),
 		format(string(Line), Fmt, [KBStr, Action, Desc])),
 		MenuEntries),
 	findall(Line, member(_-Line, MenuEntries), Lines),

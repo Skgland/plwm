@@ -323,13 +323,13 @@ grab_keys :-
 	plx:x_ungrab_key(Dp, AnyKey, AnyModifier, Rootwin),
 
 	keymaps(Keymaps),
-	forall(member(Keybind -> Action, Keymaps), (
+	forall(member((Keybind -> Action), Keymaps), (
 		keybind_to_keylist(Keybind, KeyList), length(KeyList, N), Nm1 is N - 1,
-		utils:split_at(Nm1, KeyList, Mods, [Key]),
+			utils:split_at(Nm1, KeyList, Mods, [Key]),
 		atom_string(Key, KeyStr), maplist(atom_string, ModAtoms, Mods),
-		(\+ translate_keymap(KeyStr, ModAtoms, Action) ->
-			format(string(Msg), "warning: invalid key: ~p in keymap, ignored", [Key]),
-			writeln(user_error, Msg)
+			(\+ translate_keymap(KeyStr, ModAtoms, Action) ->
+				format(string(Msg), "warning: invalid key: ~p in keymap, ignored", [Key]),
+				writeln(user_error, Msg)
 		; true)
 	)),
 	forall(keymap_internal(Kcode, ModMask, _),
@@ -928,7 +928,7 @@ nonempty_workspaces(NonEmptyWss, IncludeAct) :-
 	nb_getval(workspaces, Wss), active_mon_ws(ActMon, ActWs),
 	findall(Ws,
 	        (member(Ws, Wss),
-		once((IncludeAct = true, Ws = ActWs) ; (global_key_value(windows, ActMon-Ws, [_|_])))),
+		once(((IncludeAct = true, Ws = ActWs) ; (global_key_value(windows, ActMon-Ws, [_|_]))))),
 	        NonEmptyWss)
 .
 
@@ -940,8 +940,8 @@ nonempty_workspaces(NonEmptyWss, IncludeAct) :-
 nonempty_monitors(NonEmptyMons) :- % also includes the active one, even if it's empty
 	monitors(Mons), active_mon_ws(ActMon, _),
 	findall(Mon,
-	        (member(Mon, Mons), once(Mon = ActMon ;
-	        (global_key_value(active_ws, Mon, ActWs), global_key_value(windows, Mon-ActWs, [_|_])))),
+	        (member(Mon, Mons), once((Mon = ActMon ;
+	        (global_key_value(active_ws, Mon, ActWs), global_key_value(windows, Mon-ActWs, [_|_]))))),
 	        NonEmptyMons)
 .
 
