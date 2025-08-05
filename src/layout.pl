@@ -75,7 +75,7 @@ set_layout(Mon-Ws, Layout) :-
 %! relayout() is det
 %
 %  Recalculates and redraws the layout on the active monitor-workspace.
-relayout() :- global_value(layout, Layout), set_layout(Layout).
+relayout :- global_value(layout, Layout), set_layout(Layout).
 
 %! relayout(++Mon-Ws:string-atom) is det
 %
@@ -445,4 +445,3 @@ apply_geoms(Wins, Geoms) :-
 		))
 	)
 .
-

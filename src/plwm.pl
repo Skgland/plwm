@@ -90,10 +90,10 @@ version(0.5).
 %                        State can be: managed, floating
 %
 
-%! quit() is det
+%! quit is det
 %
 %  Terminates plwm by calling quit/1 with exit code 0 (no error).
-quit() :- quit(0).
+quit :- quit(0).
 
 %! quit(++ExitCode:integer) is det
 %
@@ -130,7 +130,7 @@ reassert(Pred) :-
 %! alloc_colors() is det
 %
 %  Allocates Xft colors, e.g. for colored window borders.
-alloc_colors() :-
+alloc_colors :-
 	display(Dp), screen(Screen),
 
 	border_color(BorderColor),
@@ -150,7 +150,7 @@ alloc_colors() :-
 %  Initializes WM atoms (e.g. WM_STATE) for ICCCM compilance.
 %
 %  See: https://www.x.org/releases/X11R7.7/doc/xorg-docs/icccm/icccm.html
-setup_wmatoms() :-
+setup_wmatoms :-
 	display(Dp),
 	plx:x_intern_atom(Dp, "WM_STATE",         false, WmState),
 	plx:x_intern_atom(Dp, "WM_PROTOCOLS",     false, WmProtocols),
@@ -171,7 +171,7 @@ setup_wmatoms() :-
 %
 %  Static atoms like _NET_WM_NAME will be set once.
 %  Dynamic atoms like _NET_CLIENT_LIST are asserted as dynamic predicates for later use.
-setup_netatoms() :-
+setup_netatoms :-
 	display(Dp), rootwin(Rootwin),
 	plx:x_intern_atom(Dp, "UTF8_STRING"             , false, Utf8string),
 	plx:x_intern_atom(Dp, "_NET_SUPPORTED"          , false, NetSupported),
@@ -315,7 +315,7 @@ keybind_to_keylist(L + R, List) :-
 %  message for any invalid mapping.
 %  For all successfully registered mappings, grabs its keys with XGrabKey(3),
 %  i.e. these key combinations will be listened to and handled in XNextEvent(3).
-grab_keys() :-
+grab_keys :-
 	display(Dp), rootwin(Rootwin), GrabModeAsync is 1, AnyKey is 0, AnyModifier is 1 << 15,
 
 	% ungrab first, because grab_keys/0 can be re-run when the keymaps/1 setting gets changed
@@ -343,7 +343,7 @@ grab_keys() :-
 %  XGrabButton(3) to handle mouse events (e.g. window movement, resizing,
 %  focus by hover) in XNextEvent(3).
 %  Also grabs the scroll button to support running custom logic on scroll
-grab_buttons() :-
+grab_buttons :-
 	display(Dp), rootwin(Rootwin),
 	modkey(ModKey),
 	modkey_mask_newmask(ModKey, 0, ModKeyVal),
@@ -372,7 +372,7 @@ grab_buttons() :-
 %  Constructs the event mask for all X11 events the wm uses (e.g. ButtonPress, PointerMotion).
 %  The mask is then used to initialize X using XChangeWindowAttributes(3) and XSelectInput(3).
 %  Also initializes the default mouse cursor.
-setup_root_win() :-
+setup_root_win :-
 	CWEventMask is 1 << 11,
 	ButtonPressMask          is 1 << 2,
 	EnterWindowMask          is 1 << 4,
@@ -572,7 +572,7 @@ close_window(Win) :-
 %! close_focused() is det
 %
 %  Closes the currently focused window with close_window/1.
-close_focused() :-
+close_focused :-
 	global_value(focused, FocusedWin),
 	close_window(FocusedWin)
 .
@@ -597,7 +597,7 @@ win_fullscreen(Win, Fullscr) :-
 %
 %  Toggles the floating status of the focused window.
 %  Floating = unmanaged, i.e. does not follow the tiling layout.
-toggle_floating() :-
+toggle_floating :-
 	global_value(focused, FocusedWin),
 	(FocusedWin =\= 0 ->
 		win_properties(FocusedWin, [OldState|Rest]),
@@ -610,7 +610,7 @@ toggle_floating() :-
 %! toggle_fullscreen() is det
 %
 %  Toggles the fullscreen status of the focused window with win_fullscreen/2.
-toggle_fullscreen() :-
+toggle_fullscreen :-
 	global_value(focused, FocusedWin),
 	(FocusedWin =\= 0 ->
 		win_properties(FocusedWin, [_, Fullscr, _]),
@@ -622,7 +622,7 @@ toggle_fullscreen() :-
 %! toggle_workspace() is det
 %
 %  Switches between the current and the previously active (if any) workspace.
-toggle_workspace() :-
+toggle_workspace :-
 	nb_getval(active_mon, ActMon), global_key_value(prev_ws, ActMon, PrevWs),
 	switch_workspace(PrevWs)
 .
@@ -630,7 +630,7 @@ toggle_workspace() :-
 %! toggle_hide_empty_workspaces() is det
 %
 %  Toggles between hiding and showing empty workspaces.
-toggle_hide_empty_workspaces() :-
+toggle_hide_empty_workspaces :-
 	hide_empty_workspaces(State),
 	utils:bool_negated(State, NState),
 	set(hide_empty_workspaces, NState)
@@ -1155,7 +1155,7 @@ format_ws_name(Fmt, [Idx, Ws], Formatted) :-
 %
 %  Updates the workspace related netatoms (e.g. _NET_CURRENT_DESKTOP).
 %    see: https://specifications.freedesktop.org/wm-spec/latest/
-update_ws_atoms() :-
+update_ws_atoms :-
 	display(Dp), rootwin(Rootwin), active_mon_ws(_, ActWs), nb_getval(workspaces, Wss),
 	netatom(numberofdesktops, NetNumberOfDesktops),
 	netatom(desktopnames,     NetDesktopNames),
@@ -1191,7 +1191,7 @@ update_ws_atoms() :-
 %
 %  Updates the _NET_WORKAREA netatom.
 %    see: https://specifications.freedesktop.org/wm-spec/latest/
-update_workarea() :-
+update_workarea :-
 	display(Dp), rootwin(Rootwin), nb_getval(active_mon, ActMon),
 	global_key_value(free_win_space, ActMon, Geom),
 	nb_getval(workspaces, Wss), length(Wss, WsCnt),
@@ -1754,7 +1754,7 @@ win_newproperties(Win, Properties) :- term_to_atom(Win, WinAtom), nb_setval(WinA
 %  After the event is handled, eventloop/0 calls itself recursively.
 %
 %  Note: the recursive call is the tail of the term, so we get last call optimization.
-eventloop() :-
+eventloop :-
 	display(Dp),
 
 	plx:x_next_event(Dp, Event),
@@ -1806,7 +1806,7 @@ change_mfact(F) :-
 %! focused_to_top() is det
 %
 %  Moves the currently focused window to the top of window stack.
-focused_to_top() :-
+focused_to_top :-
 	global_value(focused, FocusedWin),
 	(FocusedWin =\= 0 ->
 		global_value(windows, Wins),
@@ -1885,7 +1885,7 @@ trim_bar_space(Mon, [BarX, BarY, BarW, BarH]) :-
 %
 %  Calculates and sets the free space for managed windows with the following formula:
 %    monitor resolution - outer gaps - space reserved for status bars
-update_free_win_space() :-
+update_free_win_space :-
 	display(Dp), monitors(Mons),
 	forall(member(Mon, Mons), (
 		global_key_value(monitor_geom, Mon, MonGeom),
@@ -1924,7 +1924,7 @@ update_free_win_space() :-
 %
 %  Updates the _NET_CLIENT_LIST netatom.
 %    see: https://specifications.freedesktop.org/wm-spec/latest/
-update_clientlist() :-
+update_clientlist :-
 	display(Dp), rootwin(Rootwin),
 	netatom(clientlist, NetClientList),
 	PropModeAppend is 2, XA_WINDOW is 33,
@@ -1938,7 +1938,7 @@ update_clientlist() :-
 %! setup_hooks() is det
 %
 %  Registers actions to events parsed from hooks/1.
-setup_hooks() :-
+setup_hooks :-
 	retractall(hook(_, _)),
 	hooks(Hooks),
 	forall(member((Event -> Action), Hooks), (
@@ -1962,7 +1962,7 @@ run_hook(Event) :-
 %
 %  Initializes the window manager base state, i.e. the global, per-monitor and
 %  per-workspace states with defaults.
-init_state() :-
+init_state :-
 	workspaces(Wss),
 
 	empty_assoc(EmptyAMonGeom),      nb_setval(monitor_geom,   EmptyAMonGeom),
@@ -2094,7 +2094,7 @@ init_monitor(Mon, Geom) :-
 %  Initializes X: connects to Xorg with XOpenDisplay(3), queries base values like
 %  the display pointer or the root window.
 %  Also queries the XRandR extension.
-init_x() :-
+init_x :-
 	plx:x_open_display("", Dp),           assertz(display(Dp)),
 	plx:default_root_window(Dp, Rootwin), assertz(rootwin(Rootwin)),
 	plx:default_screen(Dp, Screen),       assertz(screen(Screen)),
@@ -2111,7 +2111,7 @@ init_x() :-
 %
 %  Attempts to load the configuration module from a custom path provided by the user.
 %  Fails if the file does not exist.
-load_custom_config() :-
+load_custom_config :-
 	config_flag(UserC) ->
 		exists_file(UserC) ->
 			consult(UserC)
@@ -2166,7 +2166,7 @@ load_etc_config(PathSuffix) :-
 %
 %  Note: even if none of the above works, the predicate simply succeeds since
 %  the config is optional.
-load_config() :-
+load_config :-
 	PathSuffix = '/plwm/config.pl',
 	(load_custom_config            -> writeln("-c user config loaded")
 	; load_xdg_config(PathSuffix)  -> writeln("xdg config loaded")
@@ -2181,7 +2181,7 @@ load_config() :-
 %  - settings absent from the config will retrain their current values
 %  - settings in the config which are invalid are defaulted with settings:default_set/2
 %  - settings in the config which are valid are applied
-reload_config() :-
+reload_config :-
 	% Retract all settings after making a snapshot of them
 	empty_assoc(SettigValueMap0),
 	nb_setval(settings_snapshot, SettigValueMap0),
@@ -2272,7 +2272,7 @@ parse_opt(help(false)). parse_opt(version(false)). parse_opt(check(false)).
 %! main() is det
 %
 %  Entry point of plwm.
-main() :-
+main :-
 	on_signal(term, _, quit),
 
 	% plx.so is only available locally when compiling before the first installation
@@ -2303,4 +2303,3 @@ main() :-
 
 	eventloop
 .
-
