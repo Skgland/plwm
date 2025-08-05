@@ -182,10 +182,10 @@ calculate_layout(ncols(N), Mon, WinCnt, Bounds, Geoms) :-
 .
 
 calculate_layout(grid, Mon, WinCnt, Bounds, Geoms) :-
-	Dimension is ceil(sqrt(WinCnt)),
+	Dimension is ceiling(sqrt(WinCnt)),
 	calculate_layout(nrows(Dimension), Mon, WinCnt, Bounds, Geoms)
 
-	% Note: one can play with rewriting the above ceil to floor or nrows to ncols, to their liking,
+	% Note: one can play with rewriting the above ceiling to floor or nrows to ncols, to their liking,
 	% getting another from the 4 slightly different grid layout sequences
 .
 
@@ -194,14 +194,14 @@ calculate_layout(cmaster, Mon, WinCnt, [BX, BY, BW, BH], Geoms) :- !,
 	global_key_value(nmaster, Mon-ActWs, Nmaster),
 	global_key_value(mfact, Mon-ActWs, Mfact),
 	StackWinCnt is max(0, WinCnt - Nmaster),
-	RStackWinCnt is ceil(StackWinCnt / 2),  % right stack will have 1 more win in odd cases
+	RStackWinCnt is ceiling(StackWinCnt / 2),  % right stack will have 1 more win in odd cases
 	LStackWinCnt is StackWinCnt - RStackWinCnt,
 	% Only two peer stacks are needed
 	(Nmaster == 0  ->
 		LW is floor(BW / 2),
 		inner_gaps(GapPixel),
 		FinalLW is LW - floor(GapPixel / 2),
-		RX is BX + LW + ceil(GapPixel / 2),
+		RX is BX + LW + ceiling(GapPixel / 2),
 		RW is BW - LW,
 		calculate_layout(stack, Mon, LStackWinCnt, [BX, BY, FinalLW, BH], LGeoms),
 		calculate_layout(stack, Mon, RStackWinCnt, [RX, BY, RW,      BH], RGeoms),
@@ -217,8 +217,8 @@ calculate_layout(cmaster, Mon, WinCnt, [BX, BY, BW, BH], Geoms) :- !,
 		StackX is BX + MasterW,
 		inner_gaps(GapPixel),
 		FinalMasterW is MasterW - floor(GapPixel / 2),
-		FinalStackX  is StackX  + ceil(GapPixel / 2),
-		FinalStackW  is StackW  - ceil(GapPixel / 2),
+		FinalStackX  is StackX  + ceiling(GapPixel / 2),
+		FinalStackW  is StackW  - ceiling(GapPixel / 2),
 		MasterBounds = [BX,          BY, FinalMasterW, BH],
 		StackBounds  = [FinalStackX, BY, FinalStackW,  BH],
 		calculate_layout(stack, Mon, Nmaster,     MasterBounds, CGeoms),
@@ -231,11 +231,11 @@ calculate_layout(cmaster, Mon, WinCnt, [BX, BY, BW, BH], Geoms) :- !,
 		MasterX is BX + StackW,
 		RStackX is MasterX + MasterW,
 		inner_gaps(GapPixel),
-		LStackW      is StackW - ceil(GapPixel / 2),
+		LStackW      is StackW - ceiling(GapPixel / 2),
 		FinalMasterX is MasterX + floor(GapPixel / 2),
 		FinalMasterW is MasterW - floor(GapPixel / 2) * 2,
-		FinalRStackX is RStackX + ceil(GapPixel / 2),
-		FinalRStackW is StackW - ceil(GapPixel / 2),
+		FinalRStackX is RStackX + ceiling(GapPixel / 2),
+		FinalRStackW is StackW - ceiling(GapPixel / 2),
 		LStackBounds = [BX,           BY, LStackW,      BH],
 		MasterBounds = [FinalMasterX, BY, FinalMasterW, BH],
 		RStackBounds = [FinalRStackX, BY, FinalRStackW, BH],
@@ -265,15 +265,15 @@ calculate_layout(MasterType, Mon, WinCnt, [BX, BY, BW, BH], Geoms) :-
 		StackW is BW - MasterW,
 		(MasterType = lmaster ->
 			inner_gaps(GapPixel),
-			StackX       is BX + MasterW + ceil(GapPixel / 2),
-			FinalStackW  is StackW - ceil(GapPixel / 2),
+			StackX       is BX + MasterW + ceiling(GapPixel / 2),
+			FinalStackW  is StackW - ceiling(GapPixel / 2),
 			FinalMasterW is MasterW - floor(GapPixel / 2),
 			StackBounds  = [StackX, BY, FinalStackW,  BH],
 			MasterBounds = [BX,     BY, FinalMasterW, BH]
 		;MasterType = rmaster ->
 			inner_gaps(GapPixel),
-			MasterX      is BX + StackW + ceil(GapPixel / 2),
-			FinalMasterW is MasterW - ceil(GapPixel / 2),
+			MasterX      is BX + StackW + ceiling(GapPixel / 2),
+			FinalMasterW is MasterW - ceiling(GapPixel / 2),
 			FinalStackW  is StackW - floor(GapPixel / 2),
 			MasterBounds = [MasterX, BY, FinalMasterW, BH],
 			StackBounds  = [BX     , BY, FinalStackW , BH]),
@@ -285,15 +285,15 @@ calculate_layout(MasterType, Mon, WinCnt, [BX, BY, BW, BH], Geoms) :-
 		StackH is BH - MasterH,
 		(MasterType = tmaster ->
 			inner_gaps(GapPixel),
-			StackY       is BY + MasterH + ceil(GapPixel / 2),
-			FinalStackH  is StackH - ceil(GapPixel / 2),
+			StackY       is BY + MasterH + ceiling(GapPixel / 2),
+			FinalStackH  is StackH - ceiling(GapPixel / 2),
 			FinalMasterH is MasterH - floor(GapPixel / 2),
 			MasterBounds = [BX, BY    , BW, FinalMasterH],
 			StackBounds  = [BX, StackY, BW, FinalStackH]
 		;MasterType = bmaster ->
 			inner_gaps(GapPixel),
-			MasterY     is BY + StackH + ceil(GapPixel / 2),
-			FinalMasterH is MasterH - ceil(GapPixel / 2),
+			MasterY     is BY + StackH + ceiling(GapPixel / 2),
+			FinalMasterH is MasterH - ceiling(GapPixel / 2),
 			FinalStackH  is StackH - floor(GapPixel / 2),
 			MasterBounds = [BX, MasterY, BW, FinalMasterH],
 			StackBounds  = [BX, BY     , BW, FinalStackH]),
