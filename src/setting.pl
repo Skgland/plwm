@@ -365,7 +365,7 @@ geometry_spec(X, Y, W, H) :-
 %
 %  Applies border_width/1 and border_width_focused/1 on all windows.
 %  Also redraws layout to make changes immediately visible.
-update_all_borders() :-
+update_all_borders :-
 	monws_keys(Keys),
 	forall(member(Mon-Ws, Keys), (
 		global_key_value(windows, Mon-Ws, Wins),
@@ -385,7 +385,7 @@ update_all_borders() :-
 %  Note: workspaces present in both the old and new workspaces/1 will keep their windows,
 %        otherwise the usual semantics will "shift windows to the right",
 %        [a, b, c] -> [x, y, z] will result in all windows being on x.
-set_workspaces() :-
+set_workspaces :-
 	workspaces(NewWss), nb_getval(workspaces, OldWss),
 
 	subtract(OldWss, NewWss, ToDelete), % delete workspaces no longer in workspaces/1
@@ -398,4 +398,3 @@ set_workspaces() :-
 		delete_workspace(SurvivorWs)
 	; true)
 .
-

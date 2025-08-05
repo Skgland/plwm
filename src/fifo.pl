@@ -2,12 +2,12 @@
 
 :- module(fifo, []).
 
-%! setup_fifo() is det
+%! setup_fifo is det
 %
 %  If fifo_enabled/1 and fifo_path/1 are set, attempts to create
 %  a named pipe with mkfifo(1).
 %  If the fifo is created, its path is passed to fifo:process_fifo/1 on a detached thread.
-setup_fifo() :-
+setup_fifo :-
 	(fifo_enabled(true), fifo_path(FifoPath) ->
 		catch(delete_file(FifoPath), _, true), % cleanup from previous execution
 		string_concat("mkfifo ", FifoPath, MkFifoCmd), % no swipl predicate for this
@@ -58,4 +58,3 @@ read_terms_(S, AccTerms, Terms) :-
 		)
 	)
 .
-

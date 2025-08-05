@@ -10,7 +10,7 @@
 %  Creates a menu process defined in menucmd/1, writes the list of possible
 %  selections to its stdin and if a selection happens (to stdout), passes it to
 %  the provided callback function.
-% 
+%
 %  @arg Prompt string appended as final argument to menucmd/1
 %  @arg Entries list of single-line strings passed as input to menucmd/1
 %  @arg Callback predicate that is called on lines selected from Entries
@@ -38,7 +38,7 @@ spawn_menu(Prompt, Entries, Callback) :-
 %  Uses menucmd/1 with zero selection to create a graphical prompt and
 %  captures the text the user writes into the prompt.
 %  Fails if menucmd/1 is not set.
-%  
+%
 %  @arg Prompt string appended as final argument to menucmd/1
 %  @arg Input string that the user wrote after the prompt
 read_from_prompt(Prompt, Input) :-  % use menucmd as a simple input prompt
@@ -61,7 +61,7 @@ read_from_prompt(Prompt, Input) :-  % use menucmd as a simple input prompt
 %  If there is only one monitor, it is omitted.
 %  If there is only one workspace, it is omitted.
 %  If there is only one monitor and one workspace, the output is empty.
-%  
+%
 %  @arg Mon monitor name
 %  @arg Ws workspace name
 %  @arg string output of the formatting
@@ -80,7 +80,7 @@ mon_ws_format(Mon, Ws, Str) :-
 %  If there is only one monitor, it is omitted.
 %  If there is only one workspace, it is omitted.
 %  If there is only one monitor and one workspace, the output is only the window title.
-%  
+%
 %  @arg Mon monitor name
 %  @arg Ws workspace name
 %  @arg WinT window title string
@@ -101,7 +101,7 @@ mon_ws_wint_format(Mon, Ws, WinT, Str) :-
 %
 %  Lists all windows to the user using spawn_menu/3.
 %  If a selection happens, runs the specified callback on it.
-%  
+%
 %  @arg Prompt string appended as final argument to menucmd/1
 %  @arg Callback predicate that is called on the list of selected windows
 spawn_winlist_menu(Prompt, Callback) :-
@@ -126,7 +126,7 @@ spawn_winlist_menu(Prompt, Callback) :-
 %
 %  Lists all monitor-workspace combinations other than the active one using spawn_menu/3.
 %  If a selection happens, switches to that monitor-workspace.
-goto_workspace() :-
+goto_workspace :-
 	monws_keys(Keys), active_mon_ws(ActMon, ActWs),
 	findall(Mon-Ws-MenuEntry, (   % map key (Mon-Ws) to lines for later lookup
 		member(Mon-Ws, Keys),
@@ -147,7 +147,7 @@ goto_workspace_(MenuEntries, [Selection]) :-
 %
 %  Lists all windows (grouped by monitor-workspace) other than the active one using spawn_menu/3.
 %  If a selection happens, switches its monitor-workspace, raises and focuses that window.
-goto_window() :-
+goto_window :-
 	spawn_winlist_menu("goto window", menu:goto_window_)
 .
 goto_window_(MenuInput, [Selection]) :-
@@ -163,7 +163,7 @@ goto_window_(MenuInput, [Selection]) :-
 %
 %  Lists all windows other than the ones on the active workspace using spawn_menu/3.
 %  If a selection happens, moves the selected window(s) to the active monitor-workspace.
-pull_from() :-
+pull_from :-
 	display(Dp), active_mon_ws(ActMon, ActWs), monws_keys(Keys), XA_WM_NAME is 39,
 	findall(MenuEntries, (
 		member(Mon-Ws, Keys), Mon-Ws \= ActMon-ActWs, global_key_value(windows, Mon-Ws, Wins),
@@ -190,7 +190,7 @@ pull_from_(MenuInput, Selections) :-
 %
 %  Lists all monitor-workspace combinations other than the active one using spawn_menu/3.
 %  If a selection happens, moves the active window to the selected location.
-push_to() :-
+push_to :-
 	global_value(focused, FocusedWin),
 	(FocusedWin =\= 0 ->
 		monws_keys(Keys), active_mon_ws(ActMon, ActWs),
@@ -216,7 +216,7 @@ push_to_(MenuEntries, [Selection]) :-
 %
 %  Lists all windows using spawn_menu/3.
 %  If a selection happens, closes the selected window(s).
-close_windows() :-
+close_windows :-
 	spawn_winlist_menu("close windows", menu:close_windows_)
 .
 close_windows_(MenuInput, Selections) :-
@@ -227,7 +227,7 @@ close_windows_(MenuInput, Selections) :-
 %
 %  Lists all windows using spawn_menu/3.
 %  If a selection happens, closes all windows other than the selected ones.
-keep_windows() :-
+keep_windows :-
 	spawn_winlist_menu("keep windows", menu:keep_windows_)
 .
 keep_windows_(MenuInput, Selections) :-
@@ -240,7 +240,7 @@ keep_windows_(MenuInput, Selections) :-
 %
 %  Prompts the user for a new workspace name.
 %  If it is non-empty and unique, creates it (i.e. appends to the list of workspaces).
-create_workspace() :-
+create_workspace :-
 	(read_from_prompt("new workspace", Input) ->
 		atom_string(Ws, Input),
 		create_workspace(Ws)
@@ -251,7 +251,7 @@ create_workspace() :-
 %
 %  Prompts the user for a new workspace name.
 %  If it is non-empty and unique, renames the active workspace to it.
-rename_workspace() :- % will rename the active one
+rename_workspace :- % will rename the active one
 	active_mon_ws(_, ActWs),
 	(read_from_prompt("rename workspace to", Input) ->
 		atom_string(Ws, Input),
@@ -263,7 +263,7 @@ rename_workspace() :- % will rename the active one
 %
 %  Lists the possible new workspace indices for the active one.
 %  If a selection happens, the active workspace is re-indexed to the new position.
-reindex_workspace() :- % will reindex the active one
+reindex_workspace :- % will reindex the active one
 	active_mon_ws(_, ActWs), nb_getval(workspaces, Wss), nth1(ActIdx, Wss, ActWs),
 	length(Wss, WsCnt),
 	(1 < WsCnt ->
@@ -279,7 +279,7 @@ reindex_workspace_(Ws, [Selection]) :- number_string(Idx, Selection), reindex_wo
 %  If a selection happens, the selected ones are removed.
 %  Note: owned windows of deleted workspaces are moved to the next free workspace in the list.
 %  Note: the last workspace is never removed (e.g. if all of them are selected).
-delete_workspaces() :-
+delete_workspaces :-
 	nb_getval(workspaces, Wss),
 	(Wss \= [_] ->  % don't even spawn the list if there is only one ws left
 		findall(WsStr, (member(Ws, Wss), atom_string(Ws, WsStr)), Lines),
@@ -390,7 +390,7 @@ keybind_padded([C|Cs], [C|Rest]) :- keybind_padded(Cs, Rest).
 %
 %  Prompts the user for a new nmaster value and if valid, sets nmaster to it.
 %  Fails if the input is invalid.
-change_nmaster_prompt() :-
+change_nmaster_prompt :-
 	(read_from_prompt("nmaster (+N, -N or N)", Input) ->
 		ignore((catch(term_string(N, Input), Ex, (writeln(Ex), fail)), change_nmaster(N)))
 	; true)
@@ -400,7 +400,7 @@ change_nmaster_prompt() :-
 %
 %  Prompts the user for a new mfact value and if valid, sets mfact to it.
 %  Fails if the input is invalid.
-change_mfact_prompt() :-
+change_mfact_prompt :-
 	(read_from_prompt("mfact (+F, -F or F)", Input) ->
 		ignore((catch(term_string(F, Input), Ex, (writeln(Ex), fail)), change_mfact(F)))
 	; true)
@@ -409,7 +409,7 @@ change_mfact_prompt() :-
 %! shellcmd_prompt() is det
 %
 %  Prompts the user for a shell command to run and executes it. See utils:shellcmd/1 for details.
-shellcmd_prompt() :-
+shellcmd_prompt :-
 	(read_from_prompt("shellcmd", Input) ->
 		shellcmd(Input)
 	; true)
@@ -439,7 +439,7 @@ change_setting_prompt(SettingName, Append) :-
 %! dump_settings_prompt() is det
 %
 %  Prompts the user for a path to dump settings to. See dump_settings/2 for details.
-dump_settings_prompt() :-
+dump_settings_prompt :-
 	(read_from_prompt("Dump settings to", Input) ->
 		dump_settings(Input, false)
 	; true)
@@ -448,7 +448,7 @@ dump_settings_prompt() :-
 %! dump_changed_settings_prompt() is det
 %
 %  Prompts the user for a path to dump changed settings to. See dump_settings/2 for details.
-dump_changed_settings_prompt() :-
+dump_changed_settings_prompt :-
 	(read_from_prompt("Dump changed settings to", Input) ->
 		dump_settings(Input, true)
 	; true)
@@ -481,7 +481,7 @@ run_cmd(MenuEntries, [Selection]) :-
 %    [Mod1 + ... + Modn +] Key      Command      Command description
 %
 %  If a selection happens, the selected mapping's Command is executed.
-list_keymaps() :-
+list_keymaps :-
 	keymaps(Keymaps),
 	findall(KBStr,
 		(member((KB -> _), Keymaps), format(chars(KBChars), "~p", [KB]),
@@ -511,7 +511,7 @@ list_keymaps() :-
 %  List all defined user commands (i.e. predicate intended to be called by the user)
 %  with their descriptions.
 %  If a selection happens, the selected command is executed.
-list_cmds() :-
+list_cmds :-
 	findall(layout:set_layout(Layout), layout:is_layout(Layout), SLCmds1),
 	delete(SLCmds1, layout:set_layout(nrows(_)), SLCmds2),
 	delete(SLCmds2, layout:set_layout(ncols(_)), SLCmds3),
@@ -658,4 +658,3 @@ list_cmds() :-
 	findall(Line, member(_-Line, MenuEntries), Lines),
 	spawn_menu("commands", Lines, menu:run_cmd(MenuEntries))
 .
-
