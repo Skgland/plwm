@@ -2,7 +2,11 @@
 
 :- module(animation, []).
 
+:- use_module(library(iso_ext)).
+:- use_module(library(lists)).
+
 :- use_module(utils).
+:- use_module(stubs).
 
 %! from_to_in_steps(++From:integer, ++To:integer, ++StepCnt:integer, -Steps:[integer]) is det
 %
@@ -70,4 +74,3 @@ interpolate_geom(Win, X, Y, W, H, NewX, NewY, NewW, NewH, StepCnt, Time) :-
 		sleep(Delay)
 	))
 .
-

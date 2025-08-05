@@ -7,6 +7,8 @@
 version(0.5).
 
 :- use_module(library(assoc)).
+:- use_module(library(iso_ext)).
+:- use_module(library(lists)).
 
 :- use_module(fifo).
 :- use_module(layout).
@@ -14,6 +16,7 @@ version(0.5).
 :- use_module(setting).
 :- use_module(utils).
 :- use_module(xf86names).
+:- use_module(stubs).
 
 :- dynamic(display/1).          % Stores Display pointer returned by XOpenDisplay(3)
 :- dynamic(screen/1).           % Stores Screen returned by DefaultScreen(3)
@@ -2297,7 +2300,6 @@ main :-
 	update_ws_atoms,
 
 	fifo:setup_fifo,
-
 	setup_hooks,
 	run_hook(start),
 

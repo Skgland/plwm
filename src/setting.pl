@@ -10,6 +10,11 @@
 
 :- module(setting, [set/2, add/2]).
 
+:- use_module(library(iso_ext)).
+:- use_module(library(lists)).
+
+:- use_module(stubs).
+
 %! setting(+Setting:atom) is semidet
 %  setting(-Setting:atom) is nondet
 %

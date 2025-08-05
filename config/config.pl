@@ -13,6 +13,8 @@
 % Note: there is extensive commenting in this file, as well as arbitrary examples
 % for easier understanding. Feel free to remove them once you're familiar with the settings
 
+:- use_module(stubs).
+
 %*********************************  Layout  ***********************************
 
 default_nmaster(1).      % initial number of master windows for master-stack layouts
@@ -332,4 +334,3 @@ hooks([
     writeln("plwm quitting")
   )
 ]).
-

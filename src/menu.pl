@@ -2,8 +2,12 @@
 
 :- module(menu, []).
 
+:- use_module(library(iso_ext)).
+:- use_module(library(lists)).
+
 :- use_module(layout).
 :- use_module(utils).
+:- use_module(stubs).
 
 %! spawn_menu(++Prompt:string, ++Entries:[string], :Callback:callable) is det
 %

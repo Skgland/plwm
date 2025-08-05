@@ -2,8 +2,12 @@
 
 :- module(layout, []).
 
+:- use_module(library(iso_ext)).
+:- use_module(library(lists)).
+
 :- use_module(animation).
 :- use_module(utils).
+:- use_module(stubs).
 
 % Supported layouts: (feel free to implement your own)
 
