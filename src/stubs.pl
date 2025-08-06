@@ -10,7 +10,7 @@ on_signal(_,_,_).
 
 use_foreign_library(_).
 
-opt_arguments(_,[],_).
+opt_arguments(_,[config("./config/config.pl")],_).
 
 opt_help(_,_).
 
