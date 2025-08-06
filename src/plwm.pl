@@ -15,49 +15,49 @@ version(0.5).
 :- use_module(utils).
 :- use_module(xf86names).
 
-:- dynamic display/1.          % Stores Display pointer returned by XOpenDisplay(3)
-:- dynamic screen/1.           % Stores Screen returned by DefaultScreen(3)
-:- dynamic rootwin/1.          % Stores Window returned by DefaultRootWindow(3)
-:- dynamic xrandr_available/0. % Fact if XRRQueryExtension(3) returns true
-:- dynamic config_flag/1.      % Custom config path specified with --config (if any)
-:- dynamic keymap_internal/3.  % Holds (KeyCode, ModMask, Action) triples parsed from keymaps/1
-:- dynamic wmatom/2.           % Holds interned WM atoms, e.g. query WM_STATE with wmatom(wmstate, WmState)
-:- dynamic netatom/2.          % Holds interned NET atoms, e.g. query _NET_WM_STATE with netatom(wmstate, NetWMState)
-:- dynamic hook/2.             % Holds (Event, Action) pairs parsed from hooks/1
-:- dynamic jobs/1 as shared.   % Holds pending list of command terms waiting for execution
+:- dynamic(display/1).          % Stores Display pointer returned by XOpenDisplay(3)
+:- dynamic(screen/1).           % Stores Screen returned by DefaultScreen(3)
+:- dynamic(rootwin/1).          % Stores Window returned by DefaultRootWindow(3)
+:- dynamic(xrandr_available/0). % Fact if XRRQueryExtension(3) returns true
+:- dynamic(config_flag/1).      % Custom config path specified with --config (if any)
+:- dynamic(keymap_internal/3).  % Holds (KeyCode, ModMask, Action) triples parsed from keymaps/1
+:- dynamic(wmatom/2).           % Holds interned WM atoms, e.g. query WM_STATE with wmatom(wmstate, WmState)
+:- dynamic(netatom/2).          % Holds interned NET atoms, e.g. query _NET_WM_STATE with netatom(wmstate, NetWMState)
+:- dynamic(hook/2).             % Holds (Event, Action) pairs parsed from hooks/1
+:- dynamic(jobs/1).             % Holds pending list of command terms waiting for execution
 
 % Configuration predicates
-:- dynamic default_nmaster/1.
-:- dynamic default_mfact/1.
-:- dynamic default_layout/1.
-:- dynamic attach_bottom/1.
-:- dynamic border_width/1.
-:- dynamic border_width_focused/1.
-:- dynamic border_color/1.
-:- dynamic border_color_focused/1.
-:- dynamic snap_threshold/1.
-:- dynamic outer_gaps/1.
-:- dynamic inner_gaps/1.
-:- dynamic workspaces/1.
-:- dynamic starting_workspace/1.
-:- dynamic hide_empty_workspaces/1.
-:- dynamic ws_format/1.
-:- dynamic ws_format_occupied/1.
-:- dynamic layout_default_overrides/1.
-:- dynamic bar_classes/1.
-:- dynamic bar_placement/1.
-:- dynamic fifo_enabled/1.
-:- dynamic fifo_path/1.
-:- dynamic menucmd/1.
-:- dynamic animation_enabled/1.
-:- dynamic animation_time/1.
-:- dynamic animation_granularity/1.
-:- dynamic modkey/1.
-:- dynamic scroll_up_action/1.
-:- dynamic scroll_down_action/1.
-:- dynamic keymaps/1.
-:- dynamic rules/1.
-:- dynamic hooks/1.
+:- dynamic(default_nmaster/1).
+:- dynamic(default_mfact/1).
+:- dynamic(default_layout/1).
+:- dynamic(attach_bottom/1).
+:- dynamic(border_width/1).
+:- dynamic(border_width_focused/1).
+:- dynamic(border_color/1).
+:- dynamic(border_color_focused/1).
+:- dynamic(snap_threshold/1).
+:- dynamic(outer_gaps/1).
+:- dynamic(inner_gaps/1).
+:- dynamic(workspaces/1).
+:- dynamic(starting_workspace/1).
+:- dynamic(hide_empty_workspaces/1).
+:- dynamic(ws_format/1).
+:- dynamic(ws_format_occupied/1).
+:- dynamic(layout_default_overrides/1).
+:- dynamic(bar_classes/1).
+:- dynamic(bar_placement/1).
+:- dynamic(fifo_enabled/1).
+:- dynamic(fifo_path/1).
+:- dynamic(menucmd/1).
+:- dynamic(animation_enabled/1).
+:- dynamic(animation_time/1).
+:- dynamic(animation_granularity/1).
+:- dynamic(modkey/1).
+:- dynamic(scroll_up_action/1).
+:- dynamic(scroll_down_action/1).
+:- dynamic(keymaps/1).
+:- dynamic(rules/1).
+:- dynamic(hooks/1).
 
 %*********************************  Globals  **********************************
 %
