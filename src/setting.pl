@@ -16,6 +16,40 @@
 :- use_module(stubs).
 :- use_module(utils).
 
+
+% Configuration predicates
+:- dynamic(default_nmaster/1).
+:- dynamic(default_mfact/1).
+:- dynamic(default_layout/1).
+:- dynamic(attach_bottom/1).
+:- dynamic(border_width/1).
+:- dynamic(border_width_focused/1).
+:- dynamic(border_color/1).
+:- dynamic(border_color_focused/1).
+:- dynamic(snap_threshold/1).
+:- dynamic(outer_gaps/1).
+:- dynamic(inner_gaps/1).
+:- dynamic(workspaces/1).
+:- dynamic(starting_workspace/1).
+:- dynamic(hide_empty_workspaces/1).
+:- dynamic(ws_format/1).
+:- dynamic(ws_format_occupied/1).
+:- dynamic(layout_default_overrides/1).
+:- dynamic(bar_classes/1).
+:- dynamic(bar_placement/1).
+:- dynamic(fifo_enabled/1).
+:- dynamic(fifo_path/1).
+:- dynamic(menucmd/1).
+:- dynamic(animation_enabled/1).
+:- dynamic(animation_time/1).
+:- dynamic(animation_granularity/1).
+:- dynamic(modkey/1).
+:- dynamic(scroll_up_action/1).
+:- dynamic(scroll_down_action/1).
+:- dynamic(keymaps/1).
+:- dynamic(rules/1).
+:- dynamic(hooks/1).
+
 %! setting(+Setting:atom) is semidet
 %  setting(-Setting:atom) is nondet
 %
