@@ -10,7 +10,8 @@ on_signal(_,_,_).
 
 use_foreign_library(_).
 
-opt_arguments(_,_,_).
+opt_arguments(_,[],_).
+
 opt_help(_,_).
 
 writeln(S) :- write(S), nl.
