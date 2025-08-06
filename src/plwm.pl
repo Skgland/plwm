@@ -17,6 +17,7 @@ version(0.5).
 :- use_module(setting).
 :- use_module(utils).
 :- use_module(xf86names).
+:- use_module(plx).
 :- use_module(stubs).
 
 :- dynamic(display/1).          % Stores Display pointer returned by XOpenDisplay(3)
