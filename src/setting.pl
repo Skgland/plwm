@@ -14,6 +14,7 @@
 :- use_module(library(lists)).
 
 :- use_module(stubs).
+:- use_module(utils).
 
 %! setting(+Setting:atom) is semidet
 %  setting(-Setting:atom) is nondet
