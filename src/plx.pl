@@ -181,6 +181,9 @@ x_create_simple_window(Dp, Parent, X, Y, Width, Height, BorderW, Border, Backgro
     ffi:'XCreateSimpleWindow'(Dp, Parent, X, Y, Width, Height, BorderW, Border, Background, W),
     Win = W.
 
+x_ungrab_key(Dp, KeyCode, Modifiers, GrabWindow) :-
+    ffi:'XUngrabKey'(Dp, KeyCode, Modifiers, GrabWindow, _).
+
 xrr_query_extension(Dp, Event, Error) :-
     ffi:with_locals([
         let(EventPtr, i32, 0),
