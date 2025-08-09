@@ -43,67 +43,67 @@
     'x11plwm_DefaultScreen'([ptr], i32),
     'x11plwm_DefaultColormap'([ptr, i32], u64),
     'x11plwm_DefaultVisual'([ptr, i32], ptr),
-    'x11plwm_set_error_handler'([bool], void)
+    'x11plwm_set_error_handler'([i32], void)
 ])).
 
 % bind to X11 shared library
 :- initialization(use_foreign_module("libX11.so", [
     'XOpenDisplay'([cstr], ptr),
-    'XCloseDisplay'([ptr], void),
+    'XCloseDisplay'([ptr], i32),
 
-    'XSetErrorHandler'([ptr], void),
-
-    'XSetCloseDownMode'([ptr, i32], void),
+    'XSetCloseDownMode'([ptr, i32], i32),
 
     'XCreateFontCursor'([ptr, i32], u64),
 
-    'XDefineCursor'([ptr, u64, u64], void),
-    'XFreeCursor'([ptr, u64], void),
+    'XDefineCursor'([ptr, u64, u64], i32),
+    'XFreeCursor'([ptr, u64], i32),
 
-    'XGrabKey'([ptr, i32, u32, u64, bool, i32, i32], void),
-    'XGrabButton'([ptr, u32, u32, u64, bool, u32, i32, i32, u64, u64], void),
-    'XGrabPointer'([ptr, u64, bool, u32, i32, i32, u64, u64, u64], void),
-    'XGrabServer'([ptr], void),
+    'XGrabKey'([ptr, i32, u32, u64, i32, i32, i32], i32),
+    'XGrabButton'([ptr, u32, u32, u64, i32, u32, i32, i32, u64, u64], i32),
+    'XGrabPointer'([ptr, u64, i32, u32, i32, i32, u64, u64, u64], i32),
+    'XGrabServer'([ptr], i32),
 
-    'XUngrabKey'([ptr, i32, u32, u64], void),
-    'XUngrabButton'([ptr, u32, u32, u64], void),
-    'XUngrabPointer'([ptr, u64], void),
-    'XUngrabServer'([ptr], void),
+    'XUngrabKey'([ptr, i32, u32, u64], i32),
+    'XUngrabButton'([ptr, u32, u32, u64], i32),
+    'XUngrabPointer'([ptr, u64], i32),
+    'XUngrabServer'([ptr], i32),
 
     'XKeysymToKeycode'([ptr, u64], i32),
     'XStringToKeysym'([cstr], u64),
 
-    'XNextEvent'([ptr, ptr], void),
-    'XSendEvent'([ptr, u64, bool, u64, ptr], void),
+    'XNextEvent'([ptr, ptr], i32),
+    'XSendEvent'([ptr, u64, i32, u64, ptr], i32),
 
     'XRaiseWindow'([ptr, u64], void),
     'XGetWindowAttributes'([ptr, u64, ptr], i32),
-    'XChangeWindowAttributes'([ptr, u64, u64, ptr], void),
-    'XMoveResizeWindow'([ptr, u64, i32, i32, u32, u32], void),
+    'XChangeWindowAttributes'([ptr, u64, u64, ptr], i32),
+    'XMoveResizeWindow'([ptr, u64, i32, i32, u32, u32], i32),
 
-    'XSelectInput'([ptr, u64, i64], void),
+    'XSelectInput'([ptr, u64, i64], i32),
 
-    'XMapWindow'([ptr, u64], void),
-    'XConfigureWindow'([ptr, u64, u32, ptr], void),
-    'XSetWindowBorder'([ptr, u64, u64], void),
+    'XMapWindow'([ptr, u64], i32),
+    'XConfigureWindow'([ptr, u64, u32, ptr], i32),
+    'XSetWindowBorder'([ptr, u64, u64], i32),
 
-    'XSetInputFocus'([ptr, u64, i32, u64], void),
+    'XSetInputFocus'([ptr, u64, i32, u64], i32),
 
-    'XKillClient'([ptr, u64], void),
+    'XKillClient'([ptr, u64], i32),
 
-    'XSync'([ptr, bool], void),
+    'XSync'([ptr, i32], i32),
 
-    'XInternAtom'([ptr, cstr, bool], u64),
-    'XGetClassHint'([ptr, u64, ptr], bool),
+    'XInternAtom'([ptr, cstr, i32], u64),
+    'XGetClassHint'([ptr, u64, ptr], i32),
 
-    'XInternAtom'([ptr, cstr, bool], u64),
+    'XInternAtom'([ptr, cstr, i32], u64),
 
-    'XChangeProperty'([ptr, u64, u64, u64, i32, i32, ptr, i32], void)
+    'XChangeProperty'([ptr, u64, u64, u64, i32, i32, ptr, i32], i32),
+
+    'XCreateSimpleWindow'([ptr, u64, i32, i32, u32, u32, u32, u64, u64], u64)
 ])).
 
 % bind to Xft shared library
 :- initialization(use_foreign_module("libXft.so", [
-    'XftColorAllocName'([ptr, ptr, u64, cstr, ptr], bool)
+    'XftColorAllocName'([ptr, ptr, u64, cstr, ptr], i32)
 ])).
 
 
@@ -252,7 +252,7 @@ xft_color_alloc_name(Dp, Vis, ColorMap, Name, Res) :-
         let(ResPtr, 'XftColor', ['XftColor', 0, ['XRenderColor', 0,0,0,0]])
     ],
     (
-        ffi:'XftColorAllocName'(Dp, Vis, ColorMap, Name, ResPtr),
+        ffi:'XftColorAllocName'(Dp, Vis, ColorMap, Name, ResPtr, _),
         ffi:read_ptr('XftColor', ResPtr, ResStruct),
         ['XftColor', Res, _] = ResStruct
     )).
