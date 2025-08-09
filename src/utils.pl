@@ -5,6 +5,9 @@
 :- module(utils, [global_key_value/3, global_key_newvalue/3, global_value/2, global_newvalue/2, shellcmd/1, reassert/1]).
 %                 ^ these are used quite often, so it's worth exporting them
 
+
+:- use_module(library(assoc)).
+
 :- use_module(stubs).
 
 %! valid_callable(++Callable:callable) is det
