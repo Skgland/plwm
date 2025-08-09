@@ -21,7 +21,7 @@ opt_arguments(_,[config("./config/config.pl")],_).
 
 opt_help(_,_).
 
-writeln(S) :- write(S), nl.
+writeln(S) :- format("~s~n", [S]).
 
 exists_file(Path) :- file_exists(Path).
 
@@ -37,5 +37,7 @@ nb_setval(Var, Value) :-
 
 nb_getval(Var, Copy) :-
     must_be(atom, Var),
-    globals(Var, Value),
+    ( globals(Var, Value) -> true
+    ; existens_error(variable, Var)
+    ),
     copy_term(Value, Copy).
