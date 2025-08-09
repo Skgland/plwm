@@ -18,13 +18,10 @@ PLWM = $(BIN_DIR)/plwm
 X11PLWM_O = $(BIN_DIR)/x11plwm.o
 X11PLWM_SO = $(BIN_DIR)/x11plwm.so
 
-SWIFLAGS = -p foreign=$(LIB_PATH) \
-           --goal=main --toplevel=halt --stand_alone=true -O -o $(PLWM) -c src/plwm.pl
-
 #================================== Build =====================================
 
-$(PLWM): src/*.pl $(X11PLWM_SO)
-	swipl $(SWIFLAGS)
+run: src/*.pl $(X11PLWM_SO)
+	src/plwm
 
 $(X11PLWM_SO): $(X11PLWM_O)
 	$(CC) $< $(LDFLAGS) -o $@
