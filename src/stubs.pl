@@ -7,7 +7,8 @@
     exists_file/1,
     compound_name_arguments/3,
     nb_setval/2,
-    nb_getval/2
+    nb_getval/2,
+    atom_string/2
 ]).
 
 :- use_module(library(files)).
@@ -41,3 +42,5 @@ nb_getval(Var, Copy) :-
     ; existens_error(variable, Var)
     ),
     copy_term(Value, Copy).
+
+atom_string(Atom, Chars) :- atom_chars(Atom, Chars).
