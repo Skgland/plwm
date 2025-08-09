@@ -18,6 +18,14 @@ int x11plwm_DefaultScreen(Display *display) {
 }
 
 
+Colormap x11plwm_DefaultColormap(Display *display, int screen_nr) {
+    return DefaultColormap(display, screen_nr);
+}
+
+Visual* x11plwm_DefaultVisual(Display *display, int screen_nr) {
+    return DefaultVisual(display, screen_nr);
+}
+
 
 static int
 xerror(Display __attribute__((unused)) *dpy, const XErrorEvent *ee)
