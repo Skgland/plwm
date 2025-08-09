@@ -8,12 +8,15 @@
     compound_name_arguments/3,
     nb_setval/2,
     nb_getval/2,
-    atom_string/2
+    atom_string/2,
+    ignore/1
 ]).
 
 :- use_module(library(files)).
 :- use_module(library(error)).
 :- use_module(library(si)).
+
+ignore(Goal) :- (once(Goal) -> true ; true).
 
 on_signal(_,_,_).
 
@@ -48,9 +51,11 @@ atom_string(Atom, Chars) :-
     ( var(Chars) ->
         ( atom(Atom) ->  atom_chars(Atom, Chars)
         ; chars_si(Atom) -> Atom = Chars
+        ; number_chars(Atom, Chars)
         )
     ; var(Atom) -> (
         (atom(Chars) -> Chars = Atom
         ; chars_si(Chars) -> atom_chars(Atom, Chars)
+        ; number_chars(Chars, C), atom_chars(Atom, C)
         )
     )).
