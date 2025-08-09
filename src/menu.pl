@@ -4,6 +4,8 @@
 
 :- use_module(library(iso_ext)).
 :- use_module(library(lists)).
+:- use_module(library(format)).
+:- use_module(library(dcgs)).
 
 :- use_module(layout).
 :- use_module(utils).
@@ -72,9 +74,10 @@ read_from_prompt(Prompt, Input) :-  % use menucmd as a simple input prompt
 mon_ws_format(Mon, Ws, Str) :-
 	monitors(Mons), nb_getval(workspaces, Wss), length(Mons, MonCnt), length(Wss, WsCnt),
 	(1 == MonCnt, 1 == WsCnt -> Str = ""
-	;1 == MonCnt, 1 <  WsCnt -> format(string(Str),      "~a", [     Ws])
-	;1 <  MonCnt, 1 == WsCnt -> format(string(Str), "~s"     , [Mon    ])
-	;1 <  MonCnt, 1 <  WsCnt -> format(string(Str), "~s / ~a", [Mon, Ws]))
+	;1 == MonCnt, 1 <  WsCnt -> phrase(format(     "~a", [     Ws]), Str)
+	;1 <  MonCnt, 1 == WsCnt -> phrase(format("~s"     , [Mon    ]), Str)
+	;1 <  MonCnt, 1 <  WsCnt -> phrase(format("~s / ~a", [Mon, Ws]), Str)
+	)
 .
 
 %! mon_ws_wint_format(++Mon:string, ++Ws:atom, ++WinT:string -Str:string) is det
@@ -93,12 +96,13 @@ mon_ws_wint_format(Mon, Ws, WinT, Str) :-
 	monitors(Mons), nb_getval(workspaces, Wss), length(Mons, MonCnt), length(Wss, WsCnt),
 	maplist(atom_length, Wss, WsWidths),
 	max_list(WsWidths, WsMaxWidth),
-	(1 == MonCnt, 1 == WsCnt -> format(string(Str),                    "~s", [WinT])
-	;1 <  MonCnt, 1 == WsCnt -> format(string(Str),              "~s    ~s", [Mon, WinT])
-	;1 == MonCnt, 1 <  WsCnt -> format(string(Fmt),       "~~a~~~d|    ~~s", [WsMaxWidth]),
-	                            format(string(Str), Fmt, [Ws, WinT])
-	;1 <  MonCnt, 1 <  WsCnt -> format(string(Fmt), "~~s / ~~a~~~d|    ~~s", [WsMaxWidth+4]),
-		                    format(string(Str), Fmt, [Mon, Ws, WinT]))
+	(1 == MonCnt, 1 == WsCnt -> phrase(format(                   "~s", [WinT])			, Str)
+	;1 <  MonCnt, 1 == WsCnt -> phrase(format(             "~s    ~s", [Mon, WinT])		, Str)
+	;1 == MonCnt, 1 <  WsCnt -> phrase(format(      "~~a~~~d|    ~~s", [WsMaxWidth])	, Fmt),
+	                            phrase(format(Fmt, [Ws, WinT])							, Str)
+	;1 <  MonCnt, 1 <  WsCnt -> phrase(format("~~s / ~~a~~~d|    ~~s", [WsMaxWidth+4])	, Fmt),
+		                    	phrase(format(Fmt, [Mon, Ws, WinT])						, Str)
+	)
 .
 
 %! spawn_winlist_menu(++Prompt:string, :Callback:callable) is det
@@ -314,32 +318,32 @@ cmd_desc(toggle_floating   , "Manage/unmanage focused window").
 cmd_desc(toggle_fullscreen , "Toggle fullscreen of focused window").
 cmd_desc(quit              , "Quit plwm").
 cmd_desc(change_nmaster(N) , D) :-
-	(N = +Delta, integer(Delta) -> format(string(D), "Increase number of master windows by ~d", [Delta])
-	;integer(N), N < 0          -> format(string(D), "Decrease number of master windows by ~d", [abs(N)])
-	;integer(N)                 -> format(string(D), "Set number of master windows to ~d", [N])
+	(N = +Delta, integer(Delta) -> phrase(format("Increase number of master windows by ~d", [Delta]), D)
+	;integer(N), N < 0          -> phrase(format("Decrease number of master windows by ~d", [abs(N)]), D)
+	;integer(N)                 -> phrase(format("Set number of master windows to ~d", [N]), D)
 	;                              D = "Error: invalid argument").
 cmd_desc(change_nmaster, "Set number of master windows").
 cmd_desc(change_mfact(F) , D) :-
-	(F = +Delta, float(Delta) -> format(string(D), "Add ~0f% to the space of master area", [Delta*100])
-	;float(F), F < 0          -> format(string(D), "Remove ~0f% from the space of master area", [abs(F)*100])
-	;utils:is_float(F), 0.05 =< F, F =< 0.95 -> format(string(D), "Set master area to ~0f%", [F*100])
+	(F = +Delta, float(Delta) -> phrase(format("Add ~0f% to the space of master area", [Delta*100]), D)
+	;float(F), F < 0          -> phrase(format("Remove ~0f% from the space of master area", [abs(F)*100]), D)
+	;utils:is_float(F), 0.05 =< F, F =< 0.95 -> phrase(format("Set master area to ~0f%", [F*100]), D)
 	;                            D = "Error: invalid argument").
 cmd_desc(change_mfact, "Set master area").
-cmd_desc(layout:set_layout(L), D) :- format(string(D), "Switch to ~p layout", [L]).
+cmd_desc(layout:set_layout(L), D) :- phrase(format("Switch to ~p layout", [L]), D).
 cmd_desc(toggle_workspace    , "Switch between last two workspaces").
 cmd_desc(toggle_hide_empty_workspaces, "Toggle the hide_empty_workspaces setting").
 cmd_desc(switch_workspace(prev), "Go to previous workspace")                    :- !.
 cmd_desc(switch_workspace(next), "Go to next workspace")                        :- !.
 cmd_desc(switch_workspace(prev_nonempty), "Go to previous non-empty workspace") :- !.
 cmd_desc(switch_workspace(next_nonempty), "Go to next non-empty workspace")     :- !.
-cmd_desc(switch_workspace(N) , D) :- integer(N), format(string(D), "Go to workspace #~d", [N]), !.
-cmd_desc(switch_workspace(W) , D) :- format(string(D), "Go to workspace ~p", [W]).
+cmd_desc(switch_workspace(N) , D) :- integer(N), phrase(format("Go to workspace #~d", [N]), D), !.
+cmd_desc(switch_workspace(W) , D) :- phrase(format("Go to workspace ~p", [W]), D).
 cmd_desc(move_focused_to_workspace(prev), "Move focused window to previous workspace")          :- !.
 cmd_desc(move_focused_to_workspace(next), "Move focused window to next workspace")              :- !.
 cmd_desc(move_focused_to_workspace(prev_nonempty), "Move focused window to previous workspace") :- !.
 cmd_desc(move_focused_to_workspace(next_nonempty), "Move focused window to next workspace")     :- !.
-cmd_desc(move_focused_to_workspace(N) , D) :- integer(N), format(string(D), "Move focused window to workspace #~d", [N]), !.
-cmd_desc(move_focused_to_workspace(W) , D) :- format(string(D), "Move focused window to workspace ~p", [W]).
+cmd_desc(move_focused_to_workspace(N) , D) :- integer(N), phrase(format("Move focused window to workspace #~d", [N]), D), !.
+cmd_desc(move_focused_to_workspace(W) , D) :- phrase(format("Move focused window to workspace ~p", [W]), D).
 cmd_desc(switch_monitor(prev) , "Switch to previous monitor").
 cmd_desc(switch_monitor(next) , "Switch to next monitor").
 cmd_desc(switch_monitor(prev_nonempty), "Switch to previous non-empty monitor").
@@ -348,8 +352,8 @@ cmd_desc(switch_monitor(left) , "Switch monitor in left direction").
 cmd_desc(switch_monitor(right), "Switch monitor in right direction").
 cmd_desc(switch_monitor(up)   , "Switch monitor in up direction").
 cmd_desc(switch_monitor(down) , "Switch monitor in down direction").
-cmd_desc(switch_monitor(Mon) , D) :- string(Mon), format(string(D), "Switch to monitor ~s", [Mon]).
-cmd_desc(switch_monitor(Idx) , D) :- integer(Idx), format(string(D), "Switch to monitor at index ~d", [Idx]).
+cmd_desc(switch_monitor(Mon) , D) :- string(Mon), phrase(format("Switch to monitor ~s", [Mon]), D).
+cmd_desc(switch_monitor(Idx) , D) :- integer(Idx), phrase(format("Switch to monitor at index ~d", [Idx]), D).
 cmd_desc(move_focused_to_monitor(prev) , "Move focused window to previous monitor").
 cmd_desc(move_focused_to_monitor(next) , "Move focused window to next monitor").
 cmd_desc(move_focused_to_monitor(prev_nonempty), "Move focused window to previous non-empty monitor").
@@ -358,8 +362,8 @@ cmd_desc(move_focused_to_monitor(left) , "Move focused window to monitor in left
 cmd_desc(move_focused_to_monitor(right), "Move focused window to monitor in right direction").
 cmd_desc(move_focused_to_monitor(up)   , "Move focused window to monitor in up direction").
 cmd_desc(move_focused_to_monitor(down) , "Move focused window to monitor in down direction").
-cmd_desc(move_focused_to_monitor(Mon) , D) :- string(Mon), format(string(D), "Move focused window to monitor ~s", [Mon]).
-cmd_desc(move_focused_to_monitor(Idx) , D) :- integer(Idx), format(string(D), "Move focused window to monitor at index ~d", [Idx]).
+cmd_desc(move_focused_to_monitor(Mon) , D) :- string(Mon), phrase(format("Move focused window to monitor ~s", [Mon]), D).
+cmd_desc(move_focused_to_monitor(Idx) , D) :- integer(Idx), phrase(format("Move focused window to monitor at index ~d", [Idx]), D).
 cmd_desc(menu:goto_window      , "Go to selected window, raise and focus it").
 cmd_desc(menu:goto_workspace   , "Go to selected workspace").
 cmd_desc(menu:pull_from        , "Pull selected window to active workspace").
@@ -375,7 +379,7 @@ cmd_desc(shellcmd              , "Run a shell command").
 cmd_desc(reload_config         , "Reload configuration file").
 cmd_desc(dump_settings         , "Dump current settings to a file").
 cmd_desc(dump_changed_settings , "Dump settings that differ from the defaults to a file").
-cmd_desc(shellcmd(Cmd), D) :- format(string(D), "Run `~s`", [Cmd]).
+cmd_desc(shellcmd(Cmd), D) :- phrase(format("Run `~s`", [Cmd]), D).
 cmd_desc(set(Setting), D) :- string_concat("Change setting ", Setting, D).
 cmd_desc(add(Setting), D) :- string_concat("Add to setting ", Setting, D).
 
@@ -498,13 +502,13 @@ list_keymaps :-
 	maplist(string_length, ActStrs, ActWidths),
 	max_list(KBWidths, KBMaxWidth),
 	max_list(ActWidths, ActMaxWidth),
-	format(string(Fmt), "~~s~~~d|~~p~~~d|~~s", [KBMaxWidth+3, KBMaxWidth+3+ActMaxWidth+3]),
+	phrase(format("~~s~~~d|~~p~~~d|~~s", [KBMaxWidth+3, KBMaxWidth+3+ActMaxWidth+3]), Fmt),
 
 	findall(Action-Line, (   % map key (Action) to lines for later lookup
 		nth1(Idx, Keymaps, (_ -> Action)),
 		nth1(Idx, KBStrs, KBStr),
 		once((cmd_desc(Action, Desc) ; Desc = "")),
-		format(string(Line), Fmt, [KBStr, Action, Desc])),
+		phrase(format(Fmt, [KBStr, Action, Desc]), Line)),
 		MenuEntries),
 	findall(Line, member(_-Line, MenuEntries), Lines),
 	spawn_menu("keymaps", Lines, menu:run_cmd(MenuEntries))
@@ -652,12 +656,12 @@ list_cmds :-
 		CmdStrs),
 	maplist(string_length, CmdStrs, CmdWidths),
 	max_list(CmdWidths, CmdMaxWidth),
-	format(string(Fmt), "~~p~~~d|~~s", [CmdMaxWidth+3]),
+	phrase(format("~~p~~~d|~~s", [CmdMaxWidth+3]), Fmt),
 
 	findall(Cmd-Line, (   % map key (Cmd) to lines for later lookup
 		member(Cmd, Cmds),
 		cmd_desc(Cmd, Desc),
-		format(string(Line), Fmt, [Cmd, Desc])),
+		phrase(format(Fmt, [Cmd, Desc]), Line)),
 		MenuEntries),
 	findall(Line, member(_-Line, MenuEntries), Lines),
 	spawn_menu("commands", Lines, menu:run_cmd(MenuEntries))

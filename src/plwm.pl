@@ -1118,8 +1118,7 @@ delete_monitor(Mon) :-
 
 		forall(member(Ws, Wss), delete_ws_assocs(Mon, Ws)),
 
-		format(string(Msg), "Monitor \"~s\" unmanaged", [Mon]),
-		writeln(Msg)
+		format("Monitor \"~s\" unmanaged~n", [Mon])
 	; true)
 .
 
@@ -1635,8 +1634,7 @@ handle_event(rrscreenchangenotify, _) :-
 			global_key_value(monitor_geom, Output, PrevGeom),
 			(PrevGeom \= Geom ->
 				global_key_newvalue(monitor_geom, Output, Geom),
-				format(string(Msg), "Monitor \"~s\" geometry reconfigured", [Output]),
-				writeln(Msg)
+				format("Monitor \"~s\" geometry reconfigured~n", [Output])
 			; true)
 
 		% Add new monitor
@@ -1989,8 +1987,8 @@ query_outputs(OutputInfos) :-
 			RR_Connected is 0,
 			findall(Output-[X, Y, W, H], (
 				nth0(Idx, Outputs, _),
-				(plx:xrr_get_output_info(Dp, ScreenResources, Idx, [Output, Connection, Crtc]) ->
-					Connection = RR_Connected ->
+					(plx:xrr_get_output_info(Dp, ScreenResources, Idx, [Output, Connection, Crtc]) ->
+						Connection = RR_Connected ->
 						plx:xrr_get_crtc_info(Dp, ScreenResources, Crtc, [X, Y, W, H]))
 				),
 				OutputInfos
@@ -2280,11 +2278,17 @@ main :-
 	alloc_colors,
 	setup_wmatoms,
 	setup_netatoms,
+	writeln("setup_netatoms"),
 	grab_keys,
+	writeln("grab_keys"),
 	grab_buttons,
+	writeln("grab_buttons"),
 	setup_root_win,
+	writeln("setup_root_win"),
 	update_free_win_space,
+	writeln("update_free_win_space"),
 	update_ws_atoms,
+	writeln("update_ws_atoms"),
 
 	fifo:setup_fifo,
 	setup_hooks,
