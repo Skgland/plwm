@@ -13,6 +13,7 @@
 :- use_module(library(format)).
 :- use_module(library(error)).
 :- use_module(library(si)).
+:- use_module(library(charsio)).
 
 
 % define X11 structs
@@ -159,8 +160,7 @@ x_intern_atom(Dp, Name, IfExists, Atom) :-
 x_change_property(Dp, Win, Prop, Atom, Format, Mode, Data, NElements) :-
     (chars_si(Data) ->
         % special treatment for strings
-        atom_chars(AData, Data),
-        atom_codes(AData, Codes),
+        chars_utf8bytes(Data, Codes),
         ElemType = u8,
         ArrayValues = Codes
     ;   ElemType = u64,
