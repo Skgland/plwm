@@ -173,7 +173,7 @@ x_change_property(Dp, Win, Prop, Atom, Format, Mode, Data, NElements) :-
     ffi:with_locals([
         let(ArrayPtr, ArrayType, [ArrayType | ArrayValues])
     ],
-        ffi:'XChangeProperty'(Dp, Win, Prop, Atom, Format, Mode, ArrayPtr, Len)
+        ffi:'XChangeProperty'(Dp, Win, Prop, Atom, Format, Mode, ArrayPtr, Len, _)
     ).
 
 is_all_characters([]).
