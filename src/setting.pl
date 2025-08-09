@@ -93,9 +93,8 @@ init_config(Dryrun) :-
 
 	% Check some cross-setting validity, e.g. that starting_workspace/1 is contained in workspaces/1
 	(starting_workspace(StartingWs), workspaces([WssHead|WssTail]), \+ member(StartingWs, [WssHead|WssTail]) ->
-		format(string(Msg), "warning: starting_workspace: ~a is not a workspace, defaulting to ~a",
+		format(user_error, "warning: starting_workspace: ~a is not a workspace, defaulting to ~a~n",
 		[StartingWs, WssHead]),
-		writeln(user_error, Msg),
 		(Dryrun = false ->
 			store_setting(starting_workspace, WssHead)
 		; true)
@@ -368,8 +367,7 @@ add(Setting, Value) :-
 %  @arg Setting setting that got invalid value
 %  @arg Value invalid value
 warn_invalid_setting(Setting, Value) :-
-	format(string(Msg), "warning: invalid value: ~p for setting: ~a, ignored", [Value, Setting]),
-	writeln(user_error, Msg)
+	format(user_error, "warning: invalid value: ~p for setting: ~a, ignored~n", [Value, Setting])
 .
 
 %! store_setting(++Setting:atom, ++Value:term) is det

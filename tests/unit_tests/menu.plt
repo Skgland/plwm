@@ -342,11 +342,11 @@ test("goto_workspace", [
 		assertz(menu:active_mon_ws("eDP-1", foo)),
 		assertz(menu:menucmd(["sh", "-c", "sed -n 1p"])),
 		assertz(menu:switch_monitor(Mon) :- (
-			format(string(Cmd), "echo 'switch_monitor(~s)' >> /tmp/test-output", [Mon]),
+			phrase(format("echo 'switch_monitor(~s)' >> /tmp/test-output", [Mon]), Cmd),
 			shell(Cmd)
 		)),
 		assertz(menu:switch_workspace(Ws) :- (
-			format(string(Cmd), "echo 'switch_workspace(~a)' >> /tmp/test-output", [Ws]),
+			phrase(format("echo 'switch_workspace(~a)' >> /tmp/test-output", [Ws]), Cmd),
 			shell(Cmd)
 		))
 	)),
@@ -753,4 +753,3 @@ test("list_cmds", [
 .
 
 :- end_tests(menu_tests).
-
