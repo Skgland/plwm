@@ -10,6 +10,7 @@ version(0.5).
 :- use_module(library(iso_ext)).
 :- use_module(library(lists)).
 :- use_module(library(os)).
+:- use_module(library(si)).
 
 :- use_module(fifo).
 :- use_module(layout).
@@ -288,7 +289,7 @@ translate_keymap(Key, Mods, Action) :-
 %
 %  @arg Keybind compound term representing list of keys in forms A, A+B, A+B+C,...
 %  @arg KeyList list of keys
-keybind_to_keylist(A, [A]) :- atom(A) ; string(A) ; integer(A).
+keybind_to_keylist(A, [A]) :- atom(A) ; chars_si(A) ; integer(A).
 keybind_to_keylist(L + R, List) :-
 	keybind_to_keylist(L, LL),
 	keybind_to_keylist(R, RL),
