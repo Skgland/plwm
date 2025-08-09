@@ -312,11 +312,10 @@ grab_keys :-
 	keymaps(Keymaps),
 	forall(member((Keybind -> Action), Keymaps), (
 		keybind_to_keylist(Keybind, KeyList), length(KeyList, N), Nm1 is N - 1,
-			utils:split_at(Nm1, KeyList, Mods, [Key]),
+			utils:split_at(Nm1, KeyList, ModAtoms, [Key]),
 		atom_string(Key, KeyStr), maplist(atom_string, ModAtoms, Mods),
-			(\+ translate_keymap(KeyStr, ModAtoms, Action) ->
-				format(string(Msg), "warning: invalid key: ~p in keymap, ignored", [Key]),
-				writeln(user_error, Msg)
+			(\+ translate_keymap(KeyStr, Mods, Action) ->
+				format(user_error, "warning: invalid key: ~p in keymap, ignored~n", [Key])
 		; true)
 	)),
 	forall(keymap_internal(Kcode, ModMask, _),
