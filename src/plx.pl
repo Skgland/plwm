@@ -182,6 +182,9 @@ is_all_characters([C|Cs]) :-
     atom_length(C, 1),
     is_all_characters(Cs).
 
+x_create_simple_window(Dp, Parent, X, Y, Width, Height, BorderW, Border, Background, Win) :-
+    ffi:'XCreateSimpleWindow'(Dp, Parent, X, Y, Width, Height, BorderW, Border, Background, W),
+    Win = W.
 
 xrr_query_extension(Dp, Event, Error) :-
     ffi:with_locals([
