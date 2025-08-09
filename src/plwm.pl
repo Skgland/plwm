@@ -1253,7 +1253,7 @@ update_wintype(Win) :-
 %  @arg Test to check Str against, must be a string or exact(S) where S is a string
 %  @arg Str string or var to check if it passes Test
 ruletest_on(Test, _) :- var(Test).
-ruletest_on(Test, Str) :- string(Test), sub_string(Str, _, _, _, Test).
+ruletest_on(Test, Str) :- chars_si(Test), sub_string(Str, _, _, _, Test).
 ruletest_on(exact(Str), Str).
 
 %! apply_rules(++Win:integer) is det
