@@ -4,7 +4,7 @@
 
 CC     ?= cc
 CSTD    = c99
-IFLAGS  = -I/usr/lib/swipl/include -I/usr/lib/swi-prolog/include -I/usr/include/freetype2
+IFLAGS  = -I/usr/include/freetype2
 WFLAGS  = -Wall -Wextra -Wconversion -Wshadow -pedantic -pedantic-errors
 OFLAGS  = -O2
 
@@ -15,21 +15,21 @@ LIB_PATH = /usr/local/lib
 
 BIN_DIR = bin
 PLWM = $(BIN_DIR)/plwm
-PLX_O = $(BIN_DIR)/plx.o
-PLX_SO = $(BIN_DIR)/plx.so
+X11PLWM_O = $(BIN_DIR)/x11plwm.o
+X11PLWM_SO = $(BIN_DIR)/x11plwm.so
 
 SWIFLAGS = -p foreign=$(LIB_PATH) \
            --goal=main --toplevel=halt --stand_alone=true -O -o $(PLWM) -c src/plwm.pl
 
 #================================== Build =====================================
 
-$(PLWM): src/*.pl $(PLX_SO)
+$(PLWM): src/*.pl $(X11PLWM_SO)
 	swipl $(SWIFLAGS)
 
-$(PLX_SO): $(PLX_O)
+$(X11PLWM_SO): $(X11PLWM_O)
 	$(CC) $< $(LDFLAGS) -o $@
 
-$(PLX_O): src/plx.c $(BIN_DIR)
+$(X11PLWM_O): src/x11plwm.c $(BIN_DIR)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 $(BIN_DIR):
@@ -47,15 +47,13 @@ cppcheck:
 	--suppress=missingIncludeSystem --inline-suppr \
 	--check-level=exhaustive --inconclusive \
 	--error-exitcode=1 \
-	src/plx.c
+	src/x11plwm.c
 
 clang-tidy:
 	clang-tidy --checks='clang-analyzer-*' --extra-arg="-std=$(CSTD)" \
 	--extra-arg="-I/usr/include/freetype2" \
-	--extra-arg="-I/usr/lib/swipl/include" \
-	--extra-arg="-I/usr/lib/swi-prolog/include" \
 	--warnings-as-errors='*' \
-	src/plx.c --
+	src/x11plwm.c --
 
 #=============================== Unit tests ===================================
 
@@ -69,4 +67,3 @@ install:
 
 uninstall:
 	tools/uninstall.sh
-

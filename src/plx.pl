@@ -9,6 +9,15 @@
 ]).
 
 :- use_module(library(ffi)).
+:- use_module(library(lists)).
+
+:- initialization(use_foreign_module("bin/x11plwm.so", [
+    'x11plwm_DefaultRootWindow'([ptr], u64),
+    'x11plwm_DefaultScreen'([ptr], i32),
+    'x11plwm_set_error_handler'([bool], void)
+])).
+
+:- initialization(foreign_struct('XRRScreenResources', [u64, u64, i32, ptr, i32, ptr, i32, ptr])).
 
 :- initialization(use_foreign_module("libX11.so", [
     'XOpenDisplay'([cstr], ptr),
@@ -89,23 +98,61 @@
 
 
 x_open_display(DpName, DpPtr) :-
-    % TODO how to pass null for DpName?
-    ffi:'XOpenDisplay'(DpName, DpPtr).
+    ( DpName = "" -> DpArg = 0
+    ; DpArg = DpName
+    ),
+    ffi:'XOpenDisplay'(DpArg, DpPtr).
 
 default_root_window(DpPtr, Win) :-
-    ffi:'DefaultRootWindow'(DpPtr, Win).
+    ffi:'x11plwm_DefaultRootWindow'(DpPtr, Win).
 
 default_screen(DpPtr, Screen) :-
-    ffi:'DefaultScreen'(DpPtr, Screen).
+    ffi:'x11plwm_DefaultScreen'(DpPtr, Screen).
 
-x_set_error_handler(_).
+x_set_error_handler(false) :- ffi:'x11plwm_set_error_handler'(0).
+x_set_error_handler(true) :- ffi:'x11plwm_set_error_handler'(1).
 
-xrr_query_extension(_,_,_).
+xrr_query_extension(Dp, Event, Error) :-
+    ffi:allocate(rust, i32, 0, EventPtr),
+    ffi:allocate(rust, i32, 0, ErrorPtr),
+    ( ffi:'XRRQueryExtension'(Dp, EventPtr, ErrorPtr) -> Success = true
+    ; Success = false, writeln("XRRQueryExtension() failed!")
+    ),
+    ffi:read_ptr(i32, EventPtr, FEvent),
+    ffi:read_ptr(i32, ErrorPtr, FError),
+    ffi:deallocate(rust, i32, EventPtr),
+    ffi:deallocate(rust, i32, ErrorPtr),
+    Success,
+    Event = FEvent,
+    Error = FError.
 
-xrr_select_input(_,_,_).
+xrr_select_input(Dp, Win, Mask) :- ffi:'XRRSelectInput'(Dp, Win, Mask).
 
-xrr_get_screen_resources(_,_,_,_).
+xrr_get_screen_resources(Dp, Win, ScreenResources, Out) :-
+    ffi:'XRRGetScreenResources'(Dp, Win, SR),
+    (
+        SR = 0 -> writeln("xrr_get_screen_resources: XRRGetScreenResources() returned NULL!"), false
+        ; true
+    ),
+    ( ScreenResources = SR -> true
+    ; ffi:'XRRFreeScreenResources'(SR), false
+    ),
+    ffi:read_ptr('XRRScreenResources', SR, Val),
+    ['XRRScreenResources', _timestamp, _configTimestamp, _ncrtc, _crtcs, Noutput, Outputs | _] = Val,
+    build_outputs(Noutput, Outputs, Outs),
+    ( Out = Outs -> true
+    ; ffi:'XRRFreeScreenResources'(SR), false
+    ).
 
-xrr_get_output_info(_,_,_,_).
+build_outputs(Counter, Ptr, Out) :-
+    (Counter = 0 -> Out = []
+    ; Out = [O|Os],
+      ffi:read_ptr(u64, Ptr, O),
+      Rem is Counter - 1,
+      Next is Ptr + 8,
+      build_outputs(Rem, Next, Os)
+    ).
 
-xrr_get_crtc_info(_,_,_,_).
+xrr_get_output_info(_,_,_,_) :- error(unimplemented, xrr_get_output_info/4).
+
+xrr_get_crtc_info(_,_,_,_) :-  error(unimplemented, xrr_get_crtc_info/4).
