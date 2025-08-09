@@ -12,6 +12,7 @@
 :- use_module(library(lists)).
 :- use_module(library(format)).
 :- use_module(library(error)).
+:- use_module(library(si)).
 
 
 % define X11 structs
@@ -156,7 +157,7 @@ x_intern_atom(Dp, Name, IfExists, Atom) :-
     Atom = A.
 
 x_change_property(Dp, Win, Prop, Atom, Format, Mode, Data, NElements) :-
-    (is_all_characters(Data) ->
+    (chars_si(Data) ->
         % special treatment for strings
         atom_chars(AData, Data),
         atom_codes(AData, Codes),
@@ -175,12 +176,6 @@ x_change_property(Dp, Win, Prop, Atom, Format, Mode, Data, NElements) :-
     ],
         ffi:'XChangeProperty'(Dp, Win, Prop, Atom, Format, Mode, ArrayPtr, Len, _)
     ).
-
-is_all_characters([]).
-is_all_characters([C|Cs]) :-
-    atom(C),
-    atom_length(C, 1),
-    is_all_characters(Cs).
 
 x_create_simple_window(Dp, Parent, X, Y, Width, Height, BorderW, Border, Background, Win) :-
     ffi:'XCreateSimpleWindow'(Dp, Parent, X, Y, Width, Height, BorderW, Border, Background, W),
