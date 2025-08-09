@@ -13,6 +13,7 @@
 
 :- use_module(library(files)).
 :- use_module(library(error)).
+:- use_module(library(si)).
 
 on_signal(_,_,_).
 
@@ -43,4 +44,13 @@ nb_getval(Var, Copy) :-
     ),
     copy_term(Value, Copy).
 
-atom_string(Atom, Chars) :- atom_chars(Atom, Chars).
+atom_string(Atom, Chars) :-
+    ( var(Chars) ->
+        ( atom(Atom) ->  atom_chars(Atom, Chars)
+        ; chars_si(Atom) -> Atom = Chars
+        )
+    ; var(Atom) -> (
+        (atom(Chars) -> Chars = Atom
+        ; chars_si(Chars) -> atom_chars(Atom, Chars)
+        )
+    )).
