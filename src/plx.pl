@@ -10,15 +10,43 @@
 
 :- use_module(library(ffi)).
 :- use_module(library(lists)).
+:- use_module(library(format)).
+:- use_module(library(error)).
 
+
+% define X11 structs
+:- initialization(foreign_struct('XRenderColor', [
+    u16, u16, u16, u16
+])).
+
+% define Xft structs
+:- initialization(foreign_struct('XftColor', [
+    u64, 'XRenderColor'
+])).
+
+% define Xrandr structs
+:- initialization(foreign_struct('XRRCrtcInfo', [
+    u64, i32, i32, u32, u32, u64, u16, i32, ptr, u16, i32, ptr
+])).
+
+:- initialization(foreign_struct('XRRScreenResources', [
+    u64, u64, i32, ptr, i32, ptr, i32, ptr
+])).
+
+:- initialization(foreign_struct('XRROutputInfo', [
+    u64, u64, cstr, i32, u64, u64, u16, u16, i32, ptr, i32, ptr, i32, i32, ptr
+])).
+
+% bind to x11plwm wrapper shared library
 :- initialization(use_foreign_module("bin/x11plwm.so", [
     'x11plwm_DefaultRootWindow'([ptr], u64),
     'x11plwm_DefaultScreen'([ptr], i32),
+    'x11plwm_DefaultColormap'([ptr, i32], u64),
+    'x11plwm_DefaultVisual'([ptr, i32], ptr),
     'x11plwm_set_error_handler'([bool], void)
 ])).
 
-:- initialization(foreign_struct('XRRScreenResources', [u64, u64, i32, ptr, i32, ptr, i32, ptr])).
-
+% bind to X11 shared library
 :- initialization(use_foreign_module("libX11.so", [
     'XOpenDisplay'([cstr], ptr),
     'XCloseDisplay'([ptr], void),
@@ -66,20 +94,20 @@
     'XSync'([ptr, bool], void),
 
     'XInternAtom'([ptr, cstr, bool], u64),
-    'XGetClassHint'([ptr, u64, ptr], bool)
+    'XGetClassHint'([ptr, u64, ptr], bool),
+
+    'XInternAtom'([ptr, cstr, bool], u64),
+
+    'XChangeProperty'([ptr, u64, u64, u64, i32, i32, ptr, i32], void)
 ])).
 
-%% Macros
-%    'DefaultRootWindow'([ptr], u64),
-%    'DefaultScreen'([ptr], i32),
-%    'DefaultVisual'([ptr, i32], ptr),
-%    'DefaultColormap'([ptr, i32], u64)
-%
-
+% bind to Xft shared library
 :- initialization(use_foreign_module("libXft.so", [
     'XftColorAllocName'([ptr, ptr, u64, cstr, ptr], bool)
 ])).
 
+
+% bind to Xrandr shared library
 :- initialization(use_foreign_module("libXrandr.so", [
     'XRRQueryExtension'([ptr, ptr, ptr], bool),
 
@@ -95,8 +123,6 @@
     'XRRFreeCrtcInfo'([ptr], void)
 ])).
 
-
-
 x_open_display(DpName, DpPtr) :-
     ( DpName = "" -> DpArg = 0
     ; DpArg = DpName
@@ -109,22 +135,66 @@ default_root_window(DpPtr, Win) :-
 default_screen(DpPtr, Screen) :-
     ffi:'x11plwm_DefaultScreen'(DpPtr, Screen).
 
+default_colormap(DpPtr, Screen, Cm) :-
+    ffi:'x11plwm_DefaultColormap'(DpPtr, Screen, Colormap),
+    Colormap = Cm.
+
+default_visual(DpPtr, Screen, VisPtr) :-
+    ffi:'x11plwm_DefaultVisual'(DpPtr, Screen, Ptr),
+    VisPtr = Ptr.
+
 x_set_error_handler(false) :- ffi:'x11plwm_set_error_handler'(0).
 x_set_error_handler(true) :- ffi:'x11plwm_set_error_handler'(1).
 
-xrr_query_extension(Dp, Event, Error) :-
-    ffi:allocate(rust, i32, 0, EventPtr),
-    ffi:allocate(rust, i32, 0, ErrorPtr),
-    ( ffi:'XRRQueryExtension'(Dp, EventPtr, ErrorPtr) -> Success = true
-    ; Success = false, writeln("XRRQueryExtension() failed!")
+x_intern_atom(Dp, Name, IfExists, Atom) :-
+    must_be(atom, IfExists),
+    (
+        IfExists = false -> If = 0
+    ;   IfExists = true -> If = 1
     ),
-    ffi:read_ptr(i32, EventPtr, FEvent),
-    ffi:read_ptr(i32, ErrorPtr, FError),
-    ffi:deallocate(rust, i32, EventPtr),
-    ffi:deallocate(rust, i32, ErrorPtr),
-    Success,
-    Event = FEvent,
-    Error = FError.
+    ffi:'XInternAtom'(Dp, Name, If, A),
+    Atom = A.
+
+x_change_property(Dp, Win, Prop, Atom, Format, Mode, Data, NElements) :-
+    (is_all_characters(Data) ->
+        % special treatment for strings
+        atom_chars(AData, Data),
+        atom_codes(AData, Codes),
+        ElemType = u8,
+        ArrayValues = Codes
+    ;   ElemType = u64,
+        ArrayValues = Data,
+        length(Data, NElements)
+    ),
+    length(ArrayValues, Len),
+    ffi:array_type(ElemType, Len, ArrayType),
+    ffi:with_locals([
+        let(ArrayPtr, ArrayType, [ArrayType | ArrayValues])
+    ],
+        ffi:'XChangeProperty'(Dp, Win, Prop, Atom, Format, Mode, ArrayPtr, Len)
+    ).
+
+is_all_characters([]).
+is_all_characters([C|Cs]) :-
+    atom(C),
+    atom_length(C, 1),
+    is_all_characters(Cs).
+
+
+xrr_query_extension(Dp, Event, Error) :-
+    ffi:with_locals([
+        let(EventPtr, i32, 0),
+        let(ErrorPtr, i32, 0)
+    ],
+    (
+        ( ffi:'XRRQueryExtension'(Dp, EventPtr, ErrorPtr) -> Success = true
+        ; Success = false, writeln("XRRQueryExtension() failed!")
+        ),
+        ffi:read_ptr(i32, EventPtr, FEvent),
+        ffi:read_ptr(i32, ErrorPtr, FError),
+        Event = FEvent,
+        Error = FError
+    )).
 
 xrr_select_input(Dp, Win, Mask) :- ffi:'XRRSelectInput'(Dp, Win, Mask).
 
@@ -153,6 +223,42 @@ build_outputs(Counter, Ptr, Out) :-
       build_outputs(Rem, Next, Os)
     ).
 
-xrr_get_output_info(_,_,_,_) :- error(unimplemented, xrr_get_output_info/4).
+xrr_get_output_info(Dp, ScreenResources, OutIdx,OutInfo) :-
+    ffi:read_ptr('XRRScreenResources', ScreenResources, Val),
+    ['XRRScreenResources', _timestamp, _configTimestamp, _ncrtc, _crtcs, Noutput, Outputs | _] = Val,
+    (
+        (OutIdx < 0 ; Noutput =< OutIdx) -> format("xrr_get_output_info: output_index: ~d is out of bounds: 0..~d!~n", [OutIdx, Noutput]), false
+        ; true
+    ),
+    EntryPtr is Outputs + (8 * OutIdx),
+    ffi:read_ptr(u64, EntryPtr, Output),
+    ffi:'XRRGetOutputInfo'(Dp, ScreenResources, Output, OutputPtr),
+    (
+        OutputPtr = 0 -> writeln("xrr_get_output_info: XRRGetOutputInfo() returned NULL!"), false
+        ; true
+    ),
+    ffi:read_ptr('XRROutputInfo', OutputPtr, OutputStruct),
+    ffi:'XRRFreeOutputInfo'(OutputPtr),
+    ['XRROutputInfo', _timestamp, Crtc, AtomName, _nameLen, _width, _height, Connection | _] = OutputStruct,
+    atom_chars(AtomName, Name),
+    OutInfo = [Name, Connection, Crtc].
 
-xrr_get_crtc_info(_,_,_,_) :-  error(unimplemented, xrr_get_crtc_info/4).
+xrr_free_screen_resources(Sr) :- ffi:'XRRFreeScreenResources'(Sr).
+
+xft_color_alloc_name(Dp, Vis, ColorMap, Name, Res) :-
+    ffi:with_locals([
+        let(ResPtr, 'XftColor', ['XftColor', 0, ['XRenderColor', 0,0,0,0]])
+    ],
+    (
+        ffi:'XftColorAllocName'(Dp, Vis, ColorMap, Name, ResPtr),
+        ffi:read_ptr('XftColor', ResPtr, ResStruct),
+        ['XftColor', Res, _] = ResStruct
+    )).
+
+xrr_get_crtc_info(Dp, ScreenResources, Crtc, CrtcInfo) :-
+    ffi:'XRRGetCrtcInfo'(Dp, ScreenResources, Crtc, CrtcInfoPtr),
+    ( CrtcInfoPtr = 0 -> writeln("xrr_get_crtc_info: XRRGetCrtcInfo() returned NULL!"), false; true),
+    ffi:read_ptr('XRRCrtcInfo', CrtcInfoPtr, Info),
+    ffi:'XRRFreeCrtcInfo'(CrtcInfoPtr),
+    ['XRRCrtcInfo', _timestamp, X, Y, W, H | _ ] = Info,
+    CrtcInfo = [X, Y, W, H].

@@ -2026,8 +2026,7 @@ init_monitors([Mon-[X, Y, W, H]|Rest]) :-
 init_monitor(Mon, Geom) :-
 	% A monitor with this geometry is already managed, don't register mirror
 	nb_getval(monitor_geom, AMonGeom), gen_assoc(OldMon, AMonGeom, Geom) ->
-		format(string(Msg), "Monitor \"~s\" has same geometry as \"~s\", ignoring it", [Mon, OldMon]),
-		writeln(Msg)
+		format("Monitor \"~s\" has same geometry as \"~s\", ignoring it~n", [Mon, OldMon])
 	;
 
 	default_nmaster(Nmaster), default_mfact(Mfact), default_layout(Layout),
@@ -2071,8 +2070,7 @@ init_monitor(Mon, Geom) :-
 			(ground(LayoutOR)  -> global_key_newvalue(layout,  Mon-ForWs, LayoutOR)  ; true)
 		))
 	)),
-	format(string(Msg), "Monitor \"~s\" managed", [Mon]),
-	writeln(Msg)
+	format("Monitor \"~s\" managed~n", [Mon])
 .
 
 %! init_x() is det
