@@ -163,10 +163,12 @@ x_change_property(Dp, Win, Prop, Atom, Format, Mode, Data, NElements) :-
         ElemType = u8,
         ArrayValues = Codes
     ;   ElemType = u64,
-        ArrayValues = Data,
-        length(Data, NElements)
+        ArrayValues = Data
     ),
     length(ArrayValues, Len),
+    ( Len = NElements -> true
+    ; throw(error(assert(Len = NElements), x_change_property/8))
+    ),
     ffi:array_type(ElemType, Len, ArrayType),
     ffi:with_locals([
         let(ArrayPtr, ArrayType, [ArrayType | ArrayValues])
