@@ -184,6 +184,12 @@ x_create_simple_window(Dp, Parent, X, Y, Width, Height, BorderW, Border, Backgro
 x_ungrab_key(Dp, KeyCode, Modifiers, GrabWindow) :-
     ffi:'XUngrabKey'(Dp, KeyCode, Modifiers, GrabWindow, _).
 
+x_string_to_keysym(KeyName, KeySymbol) :-
+    ffi:'XStringToKeysym'(KeyName, KeySymbol).
+
+x_keysym_to_keycode(Dp, KeySymbol, KeyCode) :-
+    ffi:'XKeysymToKeycode'(Dp, KeySymbol, KeyCode).
+
 xrr_query_extension(Dp, Event, Error) :-
     ffi:with_locals([
         let(EventPtr, i32, 0),
