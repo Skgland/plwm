@@ -4,6 +4,7 @@
 
 # executable
 plwm
+!src/plwm
 
 # tag file
 tags
@@ -13,4 +14,3 @@ compile_flags.txt
 
 # local neovim config
 .nvim.lua
-

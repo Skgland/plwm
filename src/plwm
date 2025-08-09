@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+DL_LIBRARY_PATH="${DL_LIBRARY_PATH}:${SCRIPT_DIR}/../bin"
+
+scryer-prolog -g main -g halt "${SCRIPT_DIR}/plwm.pl" -- "$@"
