@@ -16,7 +16,7 @@
 :- use_module(library(error)).
 :- use_module(library(si)).
 
-ignore(Goal) :- (once(Goal) -> true ; true).
+ignore(Goal) :- (Goal -> true ; true).
 
 on_signal(_,_,_).
 
