@@ -15,10 +15,20 @@
 :- use_module(library(si)).
 :- use_module(library(charsio)).
 
+% Note: assumes
+%    int            = i32
+%    unsigned int   = u32
+%    long           = i64
+%    unsigned long  = u64
+
 
 % define X11 structs
 :- initialization(foreign_struct('XRenderColor', [
     u16, u16, u16, u16
+])).
+
+:- initialization(foreign_struct('XSetWindowAttributes', [
+    u64, u64, u64, u64, i32, i32, i32, u64, u64, i32, i64, i64, i32, u64, u64
 ])).
 
 % define Xft structs
@@ -125,6 +135,24 @@
     'XRRFreeCrtcInfo'([ptr], void)
 ])).
 
+
+bool_int(Bool, Int) :-
+
+    (   nonvar(Bool) -> (
+            Bool = true -> Int = 1
+        ;   Bool = false -> Int = 0
+        ;   domain_error(boolean_atom, Bool, bool_int/2)
+        )
+    ;   nonvar(Int) -> (
+            Int = 1 -> Bool = true
+        ;   Int = 0 -> Bool = false
+        ;   domain_error(boolean_int, Int, bool_int/2)
+        )
+    ;   instantiation_error([Bool, Int], bool_int/2)
+    )
+.
+
+
 x_open_display(DpName, DpPtr) :-
     ( DpName = "" -> DpArg = 0
     ; DpArg = DpName
@@ -149,11 +177,7 @@ x_set_error_handler(false) :- ffi:'x11plwm_set_error_handler'(0).
 x_set_error_handler(true) :- ffi:'x11plwm_set_error_handler'(1).
 
 x_intern_atom(Dp, Name, IfExists, Atom) :-
-    must_be(atom, IfExists),
-    (
-        IfExists = false -> If = 0
-    ;   IfExists = true -> If = 1
-    ),
+    bool_int(IfExists, If),
     ffi:'XInternAtom'(Dp, Name, If, A),
     Atom = A.
 
@@ -177,12 +201,40 @@ x_change_property(Dp, Win, Prop, Atom, Format, Mode, Data, NElements) :-
         ffi:'XChangeProperty'(Dp, Win, Prop, Atom, Format, Mode, ArrayPtr, Len, _)
     ).
 
+x_change_window_attributes(Dp, Win, ValueMask, EventMask) :-
+    ffi:with_locals([
+        let(WinAttributesPtr, 'XSetWindowAttributes', ['XSetWindowAttributes', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, EventMask, 0, 0, 0, 0])
+    ],
+        ffi:'XChangeWindowAttributes'(Dp, Win, ValueMask, WinAttributesPtr, _)
+    ).
+
 x_create_simple_window(Dp, Parent, X, Y, Width, Height, BorderW, Border, Background, Win) :-
     ffi:'XCreateSimpleWindow'(Dp, Parent, X, Y, Width, Height, BorderW, Border, Background, W),
     Win = W.
 
+x_select_input(Dp, Win, EventMask) :-
+    ffi:'XSelectInput'(Dp, Win, EventMask, _).
+
+x_create_font_cursor(Dp, Shape, Cursor) :-
+    ffi:'XCreateFontCursor'(Dp, Shape, C),
+    C = Cursor.
+
+x_define_cursor(Dp, Win, Cursor) :-
+    ffi:'XDefineCursor'(Dp, Win, Cursor, _).
+
+x_grab_key(Dp, KeyCode, Modifiers, GrabWindow, OwnerEvents, PointerMode, KeyboardMode) :-
+    bool_int(OwnerEvents, Oes),
+    ffi:'XGrabKey'(Dp, KeyCode, Modifiers, GrabWindow, Oes, PointerMode, KeyboardMode, _).
+
 x_ungrab_key(Dp, KeyCode, Modifiers, GrabWindow) :-
     ffi:'XUngrabKey'(Dp, KeyCode, Modifiers, GrabWindow, _).
+
+x_grab_button(Dp, Button, Modifiersm, GrabWindow, OwnerEvents, EventMask, PointerMode, KeyboardMode, ConfineTo, Cursor) :-
+    bool_int(OwnerEvents, Oes),
+    ffi:'XGrabButton'(Dp, Button, Modifiersm, GrabWindow, Oes, EventMask, PointerMode, KeyboardMode, ConfineTo, Cursor, _).
+
+x_ungrab_button(Dp, Button, Modifiers, GrabWindow) :-
+    ffi:'XUngrabButton'(Dp, Button, Modifiers, GrabWindow, _).
 
 x_string_to_keysym(KeyName, KeySymbol) :-
     ffi:'XStringToKeysym'(KeyName, KeySymbol).
@@ -196,8 +248,8 @@ xrr_query_extension(Dp, Event, Error) :-
         let(ErrorPtr, i32, 0)
     ],
     (
-        ( ffi:'XRRQueryExtension'(Dp, EventPtr, ErrorPtr) -> Success = true
-        ; Success = false, writeln("XRRQueryExtension() failed!")
+        ( ffi:'XRRQueryExtension'(Dp, EventPtr, ErrorPtr) -> true
+        ; writeln("XRRQueryExtension() failed!"), false
         ),
         ffi:read_ptr(i32, EventPtr, FEvent),
         ffi:read_ptr(i32, ErrorPtr, FError),
