@@ -59,7 +59,7 @@ merge_geom_lists([X|Xs], [Y|Ys], [W|Ws], [H|Hs], [[X, Y, W, H]|Rest]) :-
 %  @arg StepCnt number of interpolation steps (granularity)
 %  @arg Time time in seconds the interpolation must take
 interpolate_geom(Win, X, Y, W, H, NewX, NewY, NewW, NewH, StepCnt, Time) :-
-	display(Dp),
+	user:display(Dp),
 	from_to_in_steps(X, NewX, StepCnt, StepsX),
 	from_to_in_steps(Y, NewY, StepCnt, StepsY),
 	from_to_in_steps(W, NewW, StepCnt, StepsW),
