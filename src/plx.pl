@@ -31,6 +31,10 @@
     u64, u64, u64, u64, i32, i32, i32, u64, u64, i32, i64, i64, i32, u64, u64
 ])).
 
+:- initialization(foreign_struct('XTextProperty', [
+    u8, u64, i32, u64
+])).
+
 % define Xft structs
 :- initialization(foreign_struct('XftColor', [
     u64, 'XRenderColor'
@@ -241,6 +245,41 @@ x_string_to_keysym(KeyName, KeySymbol) :-
 
 x_keysym_to_keycode(Dp, KeySymbol, KeyCode) :-
     ffi:'XKeysymToKeycode'(Dp, KeySymbol, KeyCode).
+
+gen_local_str(Atom, let(_Ptr, ArrayType, [ArrayType | Utf8Nul ])) :-
+    atom_chars(Atom, String),
+    chars_utf8bytes(String, Utf8),
+    append(Utf8, [0], Utf8Nul),
+    length(Utf8Nul, Len),
+    ffi:array_type(u8, Len, ArrayType).
+
+
+x_utf8_text_list_to_text_property(Dp, List, Count, Style, TextPropReturn) :- call_with_error_context(x_utf8_text_list_to_text_property_(Dp, List, Count, Style, TextPropReturn), predicate-x_utf8_text_list_to_text_property/5).
+
+x_utf8_text_list_to_text_property_(Dp, List, Count, Style, TextPropReturn) :-
+    length(List, Len),
+    ( Len = Count -> true
+    ; throw(error(assert(Len = Count), x_utf8_text_list_to_text_property/5))
+    ),
+    maplist(
+        gen_local_str,
+        List,
+        Locals
+    ),
+    maplist(arg(1), Locals, Ptrs),
+    format("AfterMapList~n", []),
+    ffi:array_type(ptr, Count, PointerList),
+    ffi:with_locals(
+        Locals,
+        ffi:with_locals([
+            let(Strs, PointerList, [PointerList | Ptrs])
+        ],
+            ffi:allocate(c, 'XTextProperty', ['XTextProperty' , 0, 0, 0, 0], TProp),
+            ffi:'Xutf8TextListToTextProperty'(Dp, Strs, Style, TProp, _)
+        )
+    ),
+    TProp = TextPropReturn.
+
 
 xrr_query_extension(Dp, Event, Error) :-
     ffi:with_locals([
