@@ -14,7 +14,8 @@
     is_list/1,
     last/2,
     sub_string/5,
-    flatten/2
+    flatten/2,
+    selectchk/3
 ]).
 
 :- use_module(library(files)).
@@ -49,6 +50,8 @@ flatten([X | XS], Suffix, Flat) :-
     ),
     flatten(XS, Suffix, NewSuffix)
 .
+
+selectchk(Elem, List, Rest) :- select(Elem, List, Rest) -> true.
 
 use_foreign_library(_).
 
