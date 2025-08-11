@@ -113,7 +113,7 @@ mon_ws_wint_format(Mon, Ws, WinT, Str) :-
 %  @arg Prompt string appended as final argument to menucmd/1
 %  @arg Callback predicate that is called on the list of selected windows
 spawn_winlist_menu(Prompt, Callback) :-
-	display(Dp), monws_keys(Keys), XA_WM_NAME is 39,
+	user:display(Dp), monws_keys(Keys), XA_WM_NAME is 39,
 	findall(MenuEntries, (
 		member(Mon-Ws, Keys), global_key_value(windows, Mon-Ws, Wins),
 		findall(Win-MenuEntry, (   % map XID to lines for later lookup
@@ -172,7 +172,7 @@ goto_window_(MenuInput, [Selection]) :-
 %  Lists all windows other than the ones on the active workspace using spawn_menu/3.
 %  If a selection happens, moves the selected window(s) to the active monitor-workspace.
 pull_from :-
-	display(Dp), active_mon_ws(ActMon, ActWs), monws_keys(Keys), XA_WM_NAME is 39,
+	user:display(Dp), active_mon_ws(ActMon, ActWs), monws_keys(Keys), XA_WM_NAME is 39,
 	findall(MenuEntries, (
 		member(Mon-Ws, Keys), Mon-Ws \= ActMon-ActWs, global_key_value(windows, Mon-Ws, Wins),
 		findall(Win-MenuEntry, (   % map XID to lines for later lookup

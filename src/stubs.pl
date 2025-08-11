@@ -9,16 +9,46 @@
     nb_setval/2,
     nb_getval/2,
     atom_string/2,
-    ignore/1
+    ignore/1,
+    string/1,
+    is_list/1,
+    last/2,
+    sub_string/5,
+    flatten/2
 ]).
 
 :- use_module(library(files)).
 :- use_module(library(error)).
 :- use_module(library(si)).
+:- use_module(library(lists)).
 
 ignore(Goal) :- (Goal -> true ; true).
 
 on_signal(_,_,_).
+
+is_set([]).
+is_set([X | Xs]) :- (member(X, Xs) -> false ; is_set(Xs)).
+
+is_list([]).
+is_list([_| Xs]) :- is_list(Xs).
+
+last(List, Last) :- append(_, [Last], List).
+
+sub_string(String, Before, Len, After, SubString) :-
+    append([Prefix, SubString, Suffix], String),
+    length(SubString, Len),
+    length(Prefix, Before),
+    length(Suffix, After).
+
+flatten(Nested, Flat) :- flatten(Nested, [], Flat).
+
+flatten([], X, X).
+flatten([X | XS], Suffix, Flat) :-
+    ( is_list(X) -> flatten(X, NewSuffix, Flat)
+    ; Flat = [X | NewSuffix]
+    ),
+    flatten(XS, Suffix, NewSuffix)
+.
 
 use_foreign_library(_).
 
@@ -29,6 +59,8 @@ opt_help(_,_).
 writeln(S) :- format("~s~n", [S]).
 
 exists_file(Path) :- file_exists(Path).
+
+string(S) :- chars_si(S).
 
 compound_name_arguments(Compound, Name, Args) :- Compound =.. [Name | Args].
 

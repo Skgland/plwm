@@ -11,6 +11,8 @@ version(0.5).
 :- use_module(library(lists)).
 :- use_module(library(os)).
 :- use_module(library(si)).
+:- use_module(library(dcgs)).
+:- use_module(library(format)).
 
 :- use_module(fifo).
 :- use_module(layout).
@@ -1132,8 +1134,11 @@ delete_monitor(Mon) :-
 %  @arg Ws workspace name (atom)
 %  @arg Formatted formatted output
 format_ws_name(Fmt, [Idx, Ws], Formatted) :-
-	(sub_string(Fmt, _, _, _, "~d") -> format(atom(Formatted), Fmt, [Idx, Ws]) ;
-	                                   format(atom(Formatted), Fmt, [Ws]))
+	(sub_string(Fmt, _, _, _, "~d") ->
+			phrase(format_(Fmt, [Idx, Ws]), F)
+		;	phrase(format_(Fmt, [Ws]     ), F)
+	),
+	atom_chars(Formatted, F)
 .
 
 %! update_ws_atoms() is det
@@ -2174,7 +2179,7 @@ reload_config :-
 	empty_assoc(SettigValueMap0),
 	nb_setval(settings_snapshot, SettigValueMap0),
 	forall(setting:setting(Setting), (
-		call(Setting, Value),
+		call(user:Setting, Value),
 		global_key_newvalue(settings_snapshot, Setting, Value),
 		compound_name_arguments(Config, Setting, [_]),
 		retractall(Config)
@@ -2278,11 +2283,8 @@ main :-
 	alloc_colors,
 	setup_wmatoms,
 	setup_netatoms,
-	writeln("setup_netatoms"),
 	grab_keys,
-	writeln("grab_keys"),
 	grab_buttons,
-	writeln("grab_buttons"),
 	setup_root_win,
 	writeln("setup_root_win"),
 	update_free_win_space,

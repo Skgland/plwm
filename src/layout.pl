@@ -46,7 +46,7 @@ set_layout(Layout) :- active_mon_ws(ActMon, ActWs), set_layout(ActMon-ActWs, Lay
 %  @arg Layout layout to set
 set_layout(Mon-Ws, Layout) :-
 	(is_layout(Layout) ->
-		display(Dp), global_key_value(windows, Mon-Ws, Wins),
+		user:display(Dp), global_key_value(windows, Mon-Ws, Wins),
 		(Layout \= floating ->
 			global_key_value(free_win_space, Mon, Bounds),
 			findall(Win,               % skip unmanaged and fullscreen windows
@@ -430,7 +430,7 @@ apply_inner_gaps_h(I, SizeSub, WinCnt, [[X, Y, W, H]|Gs], [[NewX, Y, NewW, H]|Ne
 apply_geoms(Wins, Geoms) :-
 	utils:pair_up_lists(Wins, Geoms, WinGeomMap),
 
-	(animation_enabled(true) ->
+	(user:animation_enabled(true) ->
 		animation_time(AnimT), animation_granularity(AnimG),
 		findall(ThreadId, (
 			member(Win-[NewX, NewY, NewW, NewH], WinGeomMap),
@@ -443,7 +443,7 @@ apply_geoms(Wins, Geoms) :-
 		forall(member(ThreadId, ThreadIds), thread_join(ThreadId))
 	;
 		forall(member(Win-[NewX, NewY, NewW, NewH], WinGeomMap), (
-			display(Dp),
+			user:display(Dp),
 			plx:x_move_resize_window(Dp, Win, NewX, NewY, NewW, NewH),
 			win_newproperties(Win, [managed, false, [NewX, NewY, NewW, NewH]])
 		))

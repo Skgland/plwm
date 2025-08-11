@@ -16,40 +16,6 @@
 :- use_module(stubs).
 :- use_module(utils).
 
-
-% Configuration predicates
-:- dynamic(default_nmaster/1).
-:- dynamic(default_mfact/1).
-:- dynamic(default_layout/1).
-:- dynamic(attach_bottom/1).
-:- dynamic(border_width/1).
-:- dynamic(border_width_focused/1).
-:- dynamic(border_color/1).
-:- dynamic(border_color_focused/1).
-:- dynamic(snap_threshold/1).
-:- dynamic(outer_gaps/1).
-:- dynamic(inner_gaps/1).
-:- dynamic(workspaces/1).
-:- dynamic(starting_workspace/1).
-:- dynamic(hide_empty_workspaces/1).
-:- dynamic(ws_format/1).
-:- dynamic(ws_format_occupied/1).
-:- dynamic(layout_default_overrides/1).
-:- dynamic(bar_classes/1).
-:- dynamic(bar_placement/1).
-:- dynamic(fifo_enabled/1).
-:- dynamic(fifo_path/1).
-:- dynamic(menucmd/1).
-:- dynamic(animation_enabled/1).
-:- dynamic(animation_time/1).
-:- dynamic(animation_granularity/1).
-:- dynamic(modkey/1).
-:- dynamic(scroll_up_action/1).
-:- dynamic(scroll_down_action/1).
-:- dynamic(keymaps/1).
-:- dynamic(rules/1).
-:- dynamic(hooks/1).
-
 %! setting(+Setting:atom) is semidet
 %  setting(-Setting:atom) is nondet
 %
@@ -76,7 +42,7 @@ setting(Setting) :- member(Setting, [
 %  @arg Dryrun if true, only the validation is executed
 init_config(Dryrun) :-
 	forall(setting(Setting), (
-		(call(Setting, Value) ->
+		(call(user:Setting, Value) ->
 			(\+ valid_set(Setting, Value) ->
 				(Dryrun = false ->
 					default_set(Setting, DefaultValue),
@@ -92,7 +58,7 @@ init_config(Dryrun) :-
 	)),
 
 	% Check some cross-setting validity, e.g. that starting_workspace/1 is contained in workspaces/1
-	(starting_workspace(StartingWs), workspaces([WssHead|WssTail]), \+ member(StartingWs, [WssHead|WssTail]) ->
+	(user:starting_workspace(StartingWs), user:workspaces([WssHead|WssTail]), \+ member(StartingWs, [WssHead|WssTail]) ->
 		format(user_error, "warning: starting_workspace: ~a is not a workspace, defaulting to ~a~n",
 		[StartingWs, WssHead]),
 		(Dryrun = false ->
@@ -126,11 +92,11 @@ valid_set_(border_color_focused,     Value) :- string(Value).
 valid_set_(snap_threshold,           Value) :- integer(Value), 0 =< Value.
 valid_set_(outer_gaps,               Value) :- integer(Value), 0 =< Value.
 valid_set_(inner_gaps,               Value) :- integer(Value), 0 =< Value.
-valid_set_(workspaces,               Value) :- Value \= [], lists:is_set(Value), forall(member(Ws, Value), atom(Ws)).
+valid_set_(workspaces,               Value) :- Value \= [], stubs:is_set(Value), forall(member(Ws, Value), atom(Ws)).
 valid_set_(starting_workspace,       Value) :- atom(Value).
 valid_set_(hide_empty_workspaces,    Value) :- Value = true ; Value = false.
-valid_set_(ws_format,                Value) :- catch(format_ws_name(Value, [1, a], _), _, fail).
-valid_set_(ws_format_occupied,       Value) :- catch(format_ws_name(Value, [1, a], _), _, fail).
+valid_set_(ws_format,                Value) :- catch(user:format_ws_name(Value, [1, a], _), E, (format("error: ~q", E), fail)).
+valid_set_(ws_format_occupied,       Value) :- catch(user:format_ws_name(Value, [1, a], _), _, fail).
 valid_set_(bar_classes,              Value) :- is_list(Value), forall(member(Pair, Value),
                                                (Pair = N-C, (string(N) ; var(N)), (string(C) ; var(C)))).
 valid_set_(bar_placement,            Value) :- Value = follow_focus ; Value = static.
@@ -140,7 +106,7 @@ valid_set_(menucmd,                  Value) :- is_list(Value), forall(member(Arg
 valid_set_(animation_enabled,        Value) :- Value = true ; Value = false.
 valid_set_(animation_time,           Value) :- utils:is_float(Value), 0.0 < Value.
 valid_set_(animation_granularity,    Value) :- integer(Value), 1 =< Value.
-valid_set_(modkey,                   Value) :- modifier(Value).
+valid_set_(modkey,                   Value) :- user:modifier(Value).
 valid_set_(scroll_up_action,         Value) :- utils:valid_callable(Value) ; Value = none.
 valid_set_(scroll_down_action,       Value) :- utils:valid_callable(Value) ; Value = none.
 valid_set_(layout_default_overrides, Value) :-
@@ -182,8 +148,8 @@ valid_set_(keymaps, Value) :-
 	is_list(Value),
 	forall(member(Keymap, Value), (
 		Keymap = (Keybind -> Action),
-		keybind_to_keylist(Keybind, KeyList),
-		forall(member(Key, KeyList), (modifier(Key) ; last(KeyList, Key))),
+		user:keybind_to_keylist(Keybind, KeyList),
+		forall(member(Key, KeyList), (user:modifier(Key) ; last(KeyList, Key))),
 		(utils:valid_callable(Action) ; Action = none)
 	))
 .
@@ -367,7 +333,7 @@ add(Setting, Value) :-
 %  @arg Setting setting that got invalid value
 %  @arg Value invalid value
 warn_invalid_setting(Setting, Value) :-
-	format(user_error, "warning: invalid value: ~p for setting: ~a, ignored~n", [Value, Setting])
+	format(user_error, "warning: invalid value: ~w for setting: ~a, ignored~n", [Value, Setting])
 .
 
 %! store_setting(++Setting:atom, ++Value:term) is det
@@ -381,7 +347,7 @@ warn_invalid_setting(Setting, Value) :-
 %  @arg Value new value for the setting
 store_setting(Setting, Value) :-
 	compound_name_arguments(Config, Setting, [Value]),
-	reassert(Config)
+	reassert(user:Config)
 .
 
 %! geometry_spec(++X:integer, ++Y:integer, ++W:integer, ++H:integer) is semidet
@@ -424,7 +390,7 @@ update_all_borders :-
 %        otherwise the usual semantics will "shift windows to the right",
 %        [a, b, c] -> [x, y, z] will result in all windows being on x.
 set_workspaces :-
-	workspaces(NewWss), nb_getval(workspaces, OldWss),
+	user:workspaces(NewWss), nb_getval(workspaces, OldWss),
 
 	subtract(OldWss, NewWss, ToDelete), % delete workspaces no longer in workspaces/1
 	forall(member(Ws, ToDelete), delete_workspace(Ws)),
