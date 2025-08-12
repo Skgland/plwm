@@ -125,7 +125,7 @@
 
 % bind to Xrandr shared library
 :- initialization(use_foreign_module("libXrandr.so", [
-    'XRRQueryExtension'([ptr, ptr, ptr], bool),
+    'XRRQueryExtension'([ptr, ptr, ptr], i32),
 
     'XRRSelectInput'([ptr, u64, i32], void),
 
@@ -287,7 +287,8 @@ xrr_query_extension(Dp, Event, Error) :-
         let(ErrorPtr, i32, 0)
     ],
     (
-        ( ffi:'XRRQueryExtension'(Dp, EventPtr, ErrorPtr) -> true
+        ffi:'XRRQueryExtension'(Dp, EventPtr, ErrorPtr, Res),
+        ( Res = 1 -> true
         ; writeln("XRRQueryExtension() failed!"), false
         ),
         ffi:read_ptr(i32, EventPtr, FEvent),
