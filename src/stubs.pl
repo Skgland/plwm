@@ -22,6 +22,7 @@
 :- use_module(library(error)).
 :- use_module(library(si)).
 :- use_module(library(lists)).
+:- use_module(library(iso_ext)).
 
 ignore(Goal) :- (Goal -> true ; true).
 
@@ -70,17 +71,10 @@ compound_name_arguments(Compound, Name, Args) :- Compound =.. [Name | Args].
 :- dynamic(globals/2).
 
 nb_setval(Var, Value) :-
-    must_be(atom, Var),
-    retractall(globals(Var, _)),
-    copy_term(Value, Copy),
-    assertz(globals(Var, Copy)).
+    bb_put(Var, Value).
 
 nb_getval(Var, Copy) :-
-    must_be(atom, Var),
-    ( globals(Var, Value) -> true
-    ; existens_error(variable, Var)
-    ),
-    copy_term(Value, Copy).
+    bb_get(Var, Copy).
 
 atom_string(Atom, Chars) :-
     ( var(Chars) ->
