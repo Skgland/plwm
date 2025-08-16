@@ -172,20 +172,17 @@ default_screen(DpPtr, Screen) :-
     ffi:'x11plwm_DefaultScreen'(DpPtr, Screen).
 
 default_colormap(DpPtr, Screen, Cm) :-
-    ffi:'x11plwm_DefaultColormap'(DpPtr, Screen, Colormap),
-    Colormap = Cm.
+    ffi:'x11plwm_DefaultColormap'(DpPtr, Screen, Cm).
 
 default_visual(DpPtr, Screen, VisPtr) :-
-    ffi:'x11plwm_DefaultVisual'(DpPtr, Screen, Ptr),
-    VisPtr = Ptr.
+    ffi:'x11plwm_DefaultVisual'(DpPtr, Screen, VisPtr).
 
 x_set_error_handler(false) :- ffi:'x11plwm_set_error_handler'(0).
 x_set_error_handler(true) :- ffi:'x11plwm_set_error_handler'(1).
 
 x_intern_atom(Dp, Name, IfExists, Atom) :-
     bool_int(IfExists, If),
-    ffi:'XInternAtom'(Dp, Name, If, A),
-    Atom = A.
+    ffi:'XInternAtom'(Dp, Name, If, Atom).
 
 x_change_property(Dp, Win, Prop, Atom, Format, Mode, Data, NElements) :-
     (chars_si(Data) ->
@@ -215,15 +212,13 @@ x_change_window_attributes(Dp, Win, ValueMask, EventMask) :-
     ).
 
 x_create_simple_window(Dp, Parent, X, Y, Width, Height, BorderW, Border, Background, Win) :-
-    ffi:'XCreateSimpleWindow'(Dp, Parent, X, Y, Width, Height, BorderW, Border, Background, W),
-    Win = W.
+    ffi:'XCreateSimpleWindow'(Dp, Parent, X, Y, Width, Height, BorderW, Border, Background, Win).
 
 x_select_input(Dp, Win, EventMask) :-
     ffi:'XSelectInput'(Dp, Win, EventMask, _).
 
 x_create_font_cursor(Dp, Shape, Cursor) :-
-    ffi:'XCreateFontCursor'(Dp, Shape, C),
-    C = Cursor.
+    ffi:'XCreateFontCursor'(Dp, Shape, Cursor).
 
 x_define_cursor(Dp, Win, Cursor) :-
     ffi:'XDefineCursor'(Dp, Win, Cursor, _).
@@ -293,10 +288,8 @@ xrr_query_extension(Dp, Event, Error) :-
         ( Res = 1 -> true
         ; writeln("XRRQueryExtension() failed!"), false
         ),
-        ffi:read_ptr(i32, EventPtr, FEvent),
-        ffi:read_ptr(i32, ErrorPtr, FError),
-        Event = FEvent,
-        Error = FError
+        ffi:read_ptr(i32, EventPtr, Event),
+        ffi:read_ptr(i32, ErrorPtr, Error)
     )).
 
 xrr_select_input(Dp, Win, Mask) :- ffi:'XRRSelectInput'(Dp, Win, Mask).
