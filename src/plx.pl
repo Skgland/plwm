@@ -114,7 +114,9 @@
 
     'XChangeProperty'([ptr, u64, u64, u64, i32, i32, ptr, i32], i32),
 
-    'XCreateSimpleWindow'([ptr, u64, i32, i32, u32, u32, u32, u64, u64], u64)
+    'XCreateSimpleWindow'([ptr, u64, i32, i32, u32, u32, u32, u64, u64], u64),
+
+    'Xutf8TextListToTextProperty'([ptr, ptr, i32, i32, ptr], i32)
 ])).
 
 % bind to Xft shared library
@@ -273,10 +275,10 @@ x_utf8_text_list_to_text_property_(Dp, List, Count, Style, TextPropReturn) :-
         Locals,
         ffi:with_locals([
             let(Strs, PointerList, [PointerList | Ptrs])
-        ],
+        ],(
             ffi:allocate(c, 'XTextProperty', ['XTextProperty' , 0, 0, 0, 0], TProp),
-            ffi:'Xutf8TextListToTextProperty'(Dp, Strs, Style, TProp, _)
-        )
+            ffi:'Xutf8TextListToTextProperty'(Dp, Strs, Len, Style, TProp, _)
+        ))
     ),
     TProp = TextPropReturn.
 
