@@ -10,7 +10,7 @@
 %  a named pipe with mkfifo(1).
 %  If the fifo is created, its path is passed to fifo:process_fifo/1 on a detached thread.
 setup_fifo :-
-	(fifo_enabled(true), fifo_path(FifoPath) ->
+	(user:fifo_enabled(true), user:fifo_path(FifoPath) ->
 		catch(delete_file(FifoPath), _, true), % cleanup from previous execution
 		string_concat("mkfifo ", FifoPath, MkFifoCmd), % no swipl predicate for this
 		shell(MkFifoCmd, ExitCode),
