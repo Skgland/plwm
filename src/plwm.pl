@@ -2287,9 +2287,7 @@ main :-
 	grab_buttons,
 	setup_root_win,
 	update_free_win_space,
-	writeln("update_free_win_space"),
 	update_ws_atoms,
-	writeln("update_ws_atoms"),
 
 	fifo:setup_fifo,
 	setup_hooks,

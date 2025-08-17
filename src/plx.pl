@@ -16,6 +16,7 @@
 :- use_module(library(charsio)).
 
 % Note: assumes
+%    char           = u8
 %    int            = i32
 %    unsigned int   = u32
 %    long           = i64
@@ -33,6 +34,57 @@
 
 :- initialization(foreign_struct('XTextProperty', [
     u8, u64, i32, u64
+])).
+
+% XEvent is a union with the size of 24x long
+:- initialization((ffi:array_type(i64, 24, Pad), foreign_struct('XEvent', [Pad]))).
+
+:- initialization(foreign_struct('XAnyEvent', [
+    i32, u64, i32, ptr, u64
+])).
+
+:- initialization(foreign_struct('XMapRequestEvent', [
+    i32, u64, i32, ptr, u64, u64
+])).
+
+:- initialization(foreign_struct('XUnmapEvent', [
+    i32, u64, i32, ptr, u64, u64, i32
+])).
+
+:- initialization(foreign_struct('XDestroyWindowEvent', [
+    i32, u64, i32, ptr, u64, u64
+])).
+
+:- initialization(foreign_struct('XCrossingEvent', [
+    i32, u64, i32, ptr, u64, u64, u64, u64, i32, i32, i32, i32, i32, i32, i32, i32, u32
+])).
+
+:- initialization(foreign_struct('XPropertyEvent', [
+    i32, u64, i32, ptr, u64, u64, u64, i32
+])).
+
+
+% technically a union of [c_char; 20], [c_short; 10] and [c_long; 5], but we only use the long
+% so we just define it as 5 longs
+:- initialization(foreign_struct('ClientMessageData', [
+    u64, u64, u64, u64, u64
+])).
+
+
+:- initialization(foreign_struct('XClientMessageEvent', [
+    i32, u64, i32, ptr, u64, u64, i32, 'ClientMessageData'
+])).
+
+:- initialization(foreign_struct('XKeyEvent', [
+    i32, u64, i32, ptr, u64, u64, u64, i32, i32, i32, i32, u32, u32, i32
+])).
+
+:- initialization(foreign_struct('XButtonEvent', [
+    i32, u64, i32, ptr, u64, u64, u64, i32, i32, i32, i32, u32, u32, i32
+])).
+
+:- initialization(foreign_struct('XMotionEvent ', [
+    i32, u64, i32, ptr, u64, u64, u64, i32, i32, i32, i32, u32, u8, i32
 ])).
 
 % define Xft structs
@@ -160,6 +212,11 @@ bool_int(Bool, Int) :-
     )
 .
 
+c_free(Ptr) :-
+    % for the c dellocator the type doesn't matter
+    % as it ignores the types layout and just calls free(Ptr) under the hood.
+    % so we use just u8 as we need to pass some valid type
+    ffi:deallocate(c, u8, Ptr).
 
 x_open_display(DpName, DpPtr) :-
     ( DpName = "" -> DpArg = 0
@@ -266,7 +323,6 @@ x_utf8_text_list_to_text_property_(Dp, List, Count, Style, TextPropReturn) :-
         Locals
     ),
     maplist(arg(1), Locals, Ptrs),
-    format("AfterMapList~n", []),
     ffi:array_type(ptr, Count, PointerList),
     ffi:with_locals(
         Locals,
@@ -283,6 +339,104 @@ x_utf8_text_list_to_text_property_(Dp, List, Count, Style, TextPropReturn) :-
 x_set_text_property(Dp, Win, TextProp, Property) :- 
     ffi:'XSetTextProperty'(Dp, Win, TextProp, Property).
 
+x_next_event(Dp, EventReturn) :-
+    ffi:array_type(i64, 24, Pad),
+    length(L, 24),
+    maplist(call(=, 0), L),
+    ffi:with_locals([
+        let(EventPtr, 'XEvent', ['XEvent', [Pad | L]])
+    ],(
+       ffi:'XNextEvent'(Dp, EventPtr, _),
+       ffi:read_ptr(EventPtr, 'XAnyEvent', ['XAnyEvent' , EventId | _]),
+       event_type_id_atom(EventId, EventAtom),
+       decode_event(EventAtom, EventPtr, EventReturn)
+    )).
+
+event_type_id_atom(20, maprequest) :- !.
+event_type_id_atom(18, unmapnotify) :- !.
+event_type_id_atom(17, destroynotify) :- !.
+event_type_id_atom(7, enternotify) :- !.
+event_type_id_atom(28, propertynotify) :- !.
+event_type_id_atom(33, clientmessage) :- !.
+event_type_id_atom(22, configurenotify) :- !.
+event_type_id_atom(2, keypress) :- !.
+event_type_id_atom(3, keyrelease) :- !.
+event_type_id_atom(3, buttonpress) :- !.
+event_type_id_atom(5, buttonrelease) :- !.
+event_type_id_atom(6, motionnotify) :- !.
+
+event_type_id_atom(EventId, EventAtom) :- rr_event_base(RrEventBase),  RrEventId is EventId - RrEventBase, rr_event_type(RrEventId, EventAtom), !.
+
+event_type_id_atom(_, unsupported_event).
+
+rr_event_type_id_atom(0, rrscreenchangenotify).
+
+% TODO SendEvent needs to be converted from int to bool bool_int
+
+decode_event(maprequest, EventPtr, ["maprequest", Type, Serial, SendEvent, Display, Parent, Window]) :- !,
+    ffi:read_ptr(EventPtr, 'XMapRequestEvent', ['XMapRequestEvent', Type, Serial, Se, Display, Parent, Window]),
+    bool_int(SendEvent, Se).
+
+decode_event(unmapnotify, EventPtr, ["unmapnotify", Type, Serial, SendEvent, Display, Event, Window, FromConfigure]) :- !,
+    ffi:read_ptr(EventPtr, 'XUnmapEvent', [ 'XUnmapEvent' , Type, Serial, Se, Display, Event, Window, Fc ]),
+    bool_int(SendEvent, Se),
+    bool_int(FromConfigure, Fc).
+    
+decode_event(destroynotify, EventPtr, ["destroynotify", Type, Serial, SendEvent, Display, Event, Window]) :- !,
+    ffi:read_ptr(EventPtr, 'XDestroyWindowEvent ', [ 'XDestroyWindowEvent ', Type, Serial, Se, Display, Event, Window ]),
+    bool_int(SendEvent, Se).
+
+decode_event(enternotify, EventPtr, ["enternotify", Type, Serial, SendEvent, Display, Window, Root, SubWindow, Time, X, Y, XRoot, YRoot, Mode, Detail, SameScreen, Focus, State]) :- !,
+    ffi:read_ptr(EventPtr, 'XCrossingEvent', [ 'XCrossingEvent' , Type, Serial, Se, Display, Window, Root, SubWindow, Time, X, Y, XRoot, YRoot, Mode, Detail, Sc, F, State ]),
+    bool_int(SendEvent, Se),
+    bool_int(SameScreen, Sc),
+    bool_int(Focus, F).
+
+decode_event(propertynotify, EventPtr, ["propertynotify", Serial, SendEvent, Display, Window, Atom, Time, State]) :- !,
+    ffi:read_ptr(EventPtr, 'XPropertyEvent', [ 'XPropertyEvent' , _Type, Serial, Se, Display, Window, Atom, Time, State ]),
+    bool_int(SendEvent, Se).
+
+decode_event(clientmessage, EventPtr, ["clientmessage", Type, Serial, SendEvent, Display, Window, MessageType, Format, L0, L1, L2]) :- !,
+    ffi:read_ptr(EventPtr, 'XClientMessageEvent ', [ 'XClientMessageEvent ', Type, Serial, Se, Display, Window, MessageType, Format, ['ClientMessageData', L0, L1, L2, _, _]]),
+    bool_int(SendEvent, Se).
+    
+decode_event(configurenotify, EventPtr, ["configurenotify", Type, Serial, SendEvent, Display, Event, Window, X, Y, Width, Height, BorderWidth, Above, OverrideRedirect]) :- !,
+    ffi:read_ptr(EventPtr, 'XConfigureEvent', [ 'XConfigureEvent', Type, Serial, Se, Display, Event, Window, X, Y, Width, Height, BorderWidth, Above, Or ]),
+    bool_int(SendEvent, Se),
+    bool_int(OverrideRedirect, Or).
+    
+decode_event(rrscreenchangenotify, _EventPtr, ["rrscreenchangenotify"]) :- !.
+    
+decode_event(keypress, EventPtr, ["keypress" | EventData ]) :- !,
+    ffi:read_ptr(EventPtr, 'XKeyEvent', [ 'XKeyEvent',_,_,_,_,_,_,_,_,_,_,_,_,_,_,KeyCode,_]), 
+    movement_common(EventPtr, KeyCode, EventData).
+
+decode_event(keyrelease, EventPtr, ["keyrelease" | EventData ]) :- !,
+    ffi:read_ptr(EventPtr, 'XKeyEvent', [ 'XKeyEvent',_,_,_,_,_,_,_,_,_,_,_,_,_,_,KeyCode,_]), 
+    movement_common(EventPtr, KeyCode, EventData).
+
+decode_event(buttonpress, EventPtr, ["buttonpress" | EventData]) :- !,
+    ffi:read_ptr(EventPtr, 'XButtonEvent', [ 'XButtonEvent',_,_,_,_,_,_,_,_,_,_,_,_,_,_,Button,_]), 
+    movement_common(EventPtr, Button, EventData).
+    
+decode_event(buttonrelease, EventPtr, ["buttonrelease" | EventData ]) :- !,
+    ffi:read_ptr(EventPtr, 'XButtonEvent', [ 'XButtonEvent',_,_,_,_,_,_,_,_,_,_,_,_,_,_,Button,_]), 
+    movement_common(EventPtr, Button, EventData).
+    
+decode_event(motionnotify, EventPtr, [ "motionnotify" | EventData]) :- !,
+    ffi:read_ptr(EventPtr, 'XMotionEvent ', [ 'XMotionEvent ',_,_,_,_,_,_,_,_,_,_,_,_,_,_,IsHint,_]), 
+    movement_common(EventPtr, IsHint, EventData).
+
+decode_event(unsupported_event, _, "unsupported_event").
+
+movement_common(EventPtr, Value, [Serial, SendEvent, Display, Window, Root, SubWindow, Time, X, Y, XRoot, YRoot, State, Value, SameScreen]) :-
+    ffi:read_ptr(EventPtr, 'XKeyEvent', ['XKeyEvent', _, Serial, Se, Display, Window, Root, SubWindow, Time, X, Y, XRoot, YRoot, State, _, Sc]),
+    bool_int(SendEvent, Se),
+    bool_int(SameScreen, Sc).
+
+
+:- dynamic(rr_event_base/1).
+
 xrr_query_extension(Dp, Event, Error) :-
     ffi:with_locals([
         let(EventPtr, i32, 0),
@@ -294,7 +448,9 @@ xrr_query_extension(Dp, Event, Error) :-
         ; writeln("XRRQueryExtension() failed!"), false
         ),
         ffi:read_ptr(i32, EventPtr, Event),
-        ffi:read_ptr(i32, ErrorPtr, Error)
+        ffi:read_ptr(i32, ErrorPtr, Error),
+        retractall(rr_event_base(_)),
+        assertz(rr_event_base(Event))
     )).
 
 xrr_select_input(Dp, Win, Mask) :- ffi:'XRRSelectInput'(Dp, Win, Mask).
