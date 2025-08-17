@@ -116,7 +116,9 @@
 
     'XCreateSimpleWindow'([ptr, u64, i32, i32, u32, u32, u32, u64, u64], u64),
 
-    'Xutf8TextListToTextProperty'([ptr, ptr, i32, i32, ptr], i32)
+    'Xutf8TextListToTextProperty'([ptr, ptr, i32, i32, ptr], i32),
+
+    'XSetTextProperty'([ptr, u64, ptr, u64], void)
 ])).
 
 % bind to Xft shared library
@@ -277,6 +279,9 @@ x_utf8_text_list_to_text_property_(Dp, List, Count, Style, TextPropReturn) :-
     ),
     TProp = TextPropReturn.
 
+
+x_set_text_property(Dp, Win, TextProp, Property) :- 
+    ffi:'XSetTextProperty'(Dp, Win, TextProp, Property).
 
 xrr_query_extension(Dp, Event, Error) :-
     ffi:with_locals([
