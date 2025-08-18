@@ -1,6 +1,5 @@
 :- module(stubs, [
     on_signal/3,
-    use_foreign_library/1,
     opt_arguments/3,
     opt_help/2,
     writeln/1,
@@ -42,8 +41,6 @@ sub_string(String, Before, Len, After, SubString) :-
     length(Suffix, After).
 
 selectchk(Elem, List, Rest) :- once(select(Elem, List, Rest)).
-
-use_foreign_library(_).
 
 opt_arguments(_,[config("./config/config.pl")],_).
 

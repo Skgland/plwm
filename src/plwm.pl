@@ -2268,9 +2268,6 @@ parse_opt(help(false)). parse_opt(version(false)). parse_opt(check(false)).
 main :-
 	on_signal(term, _, quit),
 
-	% plx.so is only available locally when compiling before the first installation
-	catch(use_foreign_library(foreign(plx)), _, use_foreign_library(plx)),
-
 	opts_spec(OptsSpec),
 	opt_arguments(OptsSpec, Opts, _),
 	forall(member(Opt, Opts), parse_opt(Opt)),
