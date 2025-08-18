@@ -22,6 +22,8 @@
 :- use_module(library(lists)).
 :- use_module(library(iso_ext)).
 
+:- meta_predicate(ignore(0)).
+
 ignore(Goal) :- (Goal -> true ; true).
 
 on_signal(_,_,_).
