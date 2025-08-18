@@ -123,7 +123,7 @@ spawn_winlist_menu(Prompt, Callback) :-
 			MenuEntries)),
 		MenuEntriesAll
 	),
-	flatten(MenuEntriesAll, MenuInput),
+	append(MenuEntriesAll, MenuInput),
 	findall(Line, member(Win-Line, MenuInput), Lines),
 	spawn_menu(Prompt, Lines, call(Callback, MenuInput))
 .
@@ -182,7 +182,7 @@ pull_from :-
 			MenuEntries)),
 		MenuEntriesAll
 	),
-	flatten(MenuEntriesAll, MenuInput),
+	append(MenuEntriesAll, MenuInput),
 	findall(Line, member(Win-Line, MenuInput), Lines),
 	spawn_menu("pull from", Lines, menu:pull_from_(MenuInput))
 .
@@ -538,7 +538,7 @@ list_cmds :-
 	findall(move_focused_to_monitor(Mon), member(Mon, Mons), MoveToMonCmds),
 	findall(move_focused_to_monitor(Idx), nth1(Idx, Mons, _), MoveToMonByIdxCmds),
 
-	flatten([
+	append([
 		[
 		shift_focus(down),
 		shift_focus(up),

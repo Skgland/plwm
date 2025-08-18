@@ -1186,7 +1186,7 @@ update_workarea :-
 	global_key_value(free_win_space, ActMon, Geom),
 	nb_getval(workspaces, Wss), length(Wss, WsCnt),
 
-	utils:n_item_clones(WsCnt, Geom, Geoms), flatten(Geoms, Geoms1D),
+	utils:n_item_clones(WsCnt, Geom, Geoms), append(Geoms, Geoms1D),
 
 	netatom(workarea, NetWorkArea),
 	XA_CARDINAL is 6, PropModeReplace is 0, DataCnt is WsCnt * 4,

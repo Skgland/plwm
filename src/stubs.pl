@@ -14,7 +14,6 @@
     is_list/1,
     last/2,
     sub_string/5,
-    flatten/2,
     selectchk/3
 ]).
 
@@ -29,7 +28,7 @@ ignore(Goal) :- (Goal -> true ; true).
 on_signal(_,_,_).
 
 is_set([]).
-is_set([X | Xs]) :- (member(X, Xs) -> false ; is_set(Xs)).
+is_set([X | Xs]) :- \+ member(X, Xs) , is_set(Xs).
 
 is_list([]).
 is_list([_| Xs]) :- is_list(Xs).
@@ -42,17 +41,7 @@ sub_string(String, Before, Len, After, SubString) :-
     length(Prefix, Before),
     length(Suffix, After).
 
-flatten(Nested, Flat) :- flatten(Nested, [], Flat).
-
-flatten([], X, X).
-flatten([X | XS], Suffix, Flat) :-
-    ( is_list(X) -> flatten(X, NewSuffix, Flat)
-    ; Flat = [X | NewSuffix]
-    ),
-    flatten(XS, Suffix, NewSuffix)
-.
-
-selectchk(Elem, List, Rest) :- select(Elem, List, Rest) -> true.
+selectchk(Elem, List, Rest) :- once(select(Elem, List, Rest)).
 
 use_foreign_library(_).
 
