@@ -31,8 +31,7 @@ on_signal(_,_,_).
 is_set([]).
 is_set([X | Xs]) :- \+ member(X, Xs) , is_set(Xs).
 
-is_list([]).
-is_list([_| Xs]) :- is_list(Xs).
+is_list(Xs) :- list_si(Xs).
 
 last(List, Last) :- append(_, [Last], List).
 
