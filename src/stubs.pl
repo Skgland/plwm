@@ -55,8 +55,6 @@ string(S) :- chars_si(S).
 
 compound_name_arguments(Compound, Name, Args) :- Compound =.. [Name | Args].
 
-:- dynamic(globals/2).
-
 nb_setval(Var, Value) :-
     bb_put(Var, Value).
 
